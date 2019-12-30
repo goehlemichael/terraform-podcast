@@ -205,7 +205,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcastcontent.michaelgoehle.com"]
+//  aliases = ["podcastcontent.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -310,7 +310,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcast.michaelgoehle.com"]
+//  aliases = ["podcast.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -430,7 +430,7 @@ resource "aws_sns_topic" "xml_generation_error" {
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_name                = "XML-Generation-Problem"
   comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "360"
+  evaluation_periods        = "240"
   metric_name               = "Errors"
   namespace                 = "AWS/Lambda"
   period                    = "360"
