@@ -77,7 +77,7 @@ resource "aws_s3_bucket_policy" "content" {
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::podcast-content-bucket-name_-example"
+            "Resource": "arn:aws:s3:::podcast-content-bucket-name-example"
         }
     ]
 }
