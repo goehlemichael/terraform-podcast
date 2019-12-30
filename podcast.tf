@@ -4,26 +4,26 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-# Cert Management
-resource "aws_acm_certificate" "cert" {
-  domain_name               = "michaelgoehle.com"
-  subject_alternative_names = ["*.michaelgoehle.com"]
-  validation_method         = "DNS"
-}
+//# Cert Management
+//resource "aws_acm_certificate" "cert" {
+//  domain_name               = "michaelgoehle.com"
+//  subject_alternative_names = ["*.michaelgoehle.com"]
+//  validation_method         = "DNS"
+//}
 
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
   name = "michaelgoehle.com"
 }
 
-# Route 53 Records
-resource "aws_route53_record" "cert_validation" {
-  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
-  zone_id = aws_route53_zone.zone.id
-  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
-  ttl = 60
-}
+//# Route 53 Records
+//resource "aws_route53_record" "cert_validation" {
+//  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
+//  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
+//  zone_id = aws_route53_zone.zone.id
+//  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+//  ttl = 60
+//}
 
 //resource "aws_route53_record" "cert_validation_alt1" {
 //  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
@@ -33,14 +33,14 @@ resource "aws_route53_record" "cert_validation" {
 //  ttl = 60
 //}
 
-resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn = aws_acm_certificate.cert.arn
-
-  validation_record_fqdns = [
-    aws_route53_record.cert_validation.fqdn,
-//    aws_route53_record.cert_validation_alt1.fqdn,
-  ]
-}
+//resource "aws_acm_certificate_validation" "cert" {
+//  certificate_arn = aws_acm_certificate.cert.arn
+//
+//  validation_record_fqdns = [
+//    aws_route53_record.cert_validation.fqdn,
+////    aws_route53_record.cert_validation_alt1.fqdn,
+//  ]
+//}
 
 # S3 Buckets
 resource "aws_s3_bucket" "content" {
@@ -146,24 +146,24 @@ resource "aws_lambda_function" "podcast_xml_generator" {
     variables = {
       category_one          = "category 1"
       category_two          = "category 2"
-      cloudfront_content    = "https://podcast-content-bucket-name-example.s3.amazonaws.com"
+      cloudfront_content    = "http://podcast-content-bucket-name-example.s3.amazonaws.com"
       copyright_text        = "sample copyright text"
       email                 = "example@example.com"
       explicit              = "no"
       language              = "en"
       podcast_author        = "sample author"
       podcast_des           = "sample description here"
-      podcast_img_url       = "https://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
+      podcast_img_url       = "http://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
       podcast_type          = "episodic"
-      podcast_url           = "https://podcast-rss-bucket-name-example.s3.amazonaws.com"
+      podcast_url           = "http://podcast-rss-bucket-name-example.s3.amazonaws.com"
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = "podcast-rss-bucket-name-example"
       s3_bucket_trigger     = "podcast-content-bucket-name-example"
       sub_category_one      = ""
       sub_category_two      = ""
-      website               = "http://example.com"
+      website               = "http://michaelgoehle.com"
     }
   }
 }
@@ -280,9 +280,9 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     }
   }
 
-  tags = {
-    Environment = "production"
-  }
+//  tags = {
+//    Environment = "production"
+//  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
@@ -385,9 +385,9 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     }
   }
 
-  tags = {
-    Environment = "production"
-  }
+//  tags = {
+//    Environment = "production"
+//  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
