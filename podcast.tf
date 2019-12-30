@@ -21,19 +21,17 @@ resource "aws_route53_record" "cert_validation" {
   name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
   type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
   zone_id = aws_route53_zone.zone.id
-  records = [
-  aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
   ttl = 60
 }
 
 //resource "aws_route53_record" "cert_validation_alt1" {
-////  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
-////  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
-////  zone_id = aws_route53_zone.zone.id
-////  records = [
-////  aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
-////  ttl = 60
-////}
+//  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
+//  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
+//  zone_id = aws_route53_zone.zone.id
+//  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
+//  ttl = 60
+//}
 
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn = aws_acm_certificate.cert.arn
@@ -61,7 +59,6 @@ resource "aws_s3_bucket" "rss" {
 # S3 bucket policies
 resource "aws_s3_bucket_policy" "content" {
   bucket = aws_s3_bucket.content.id
-
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -86,7 +83,6 @@ POLICY
 
 resource "aws_s3_bucket_policy" "rss" {
   bucket = aws_s3_bucket.rss.id
-
   policy = <<POLICY
 {
     "Version": "2012-10-17",
@@ -112,7 +108,6 @@ POLICY
 # Role Mangement
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
-
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -145,7 +140,6 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
   # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
   source_code_hash = filebase64sha256("mp3.py")
-
   runtime = "python3.7"
 
   environment {
@@ -430,19 +424,19 @@ resource "aws_route53_record" "podcastcontent" {
 resource "aws_sns_topic" "xml_generation_error" {
   name = "xml_generation_error"
 }
-# Create a subscriber for the topic unsure how to do this
+# Create a subscriber for the topic
 
 # Cloud Watch Alarm
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_name                = "XML-Generation-Problem"
   comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "2"
+  evaluation_periods        = "360"
   metric_name               = "Errors"
   namespace                 = "AWS/Lambda"
   period                    = "360"
   statistic                 = "Average"
   threshold                 = "0"
-  alarm_actions = [aws_sns_topic.xml_generation_error.arn]
+  alarm_actions             = [aws_sns_topic.xml_generation_error.arn]
   alarm_description         = "This monitors issues with the xml file generating"
   actions_enabled           = true
 }
