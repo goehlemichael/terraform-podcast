@@ -82,8 +82,8 @@ data "aws_iam_policy_document" "sns-topic-policy" {
     effect = "Allow"
 
     principals {
-      type        = "AWS"
-      identifiers = ["*"]
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
     }
 
     resources = [
@@ -481,7 +481,7 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   period                    = "360"
   statistic                 = "Average"
   threshold                 = "0"
-  alarm_actions             = [aws_sns_topic.xml_generation_error.arn]
+  alarm_actions             = [aws_sns_topic.podcast-errors.arn]
   alarm_description         = "This monitors issues with the xml file generating"
   actions_enabled           = true
 }
