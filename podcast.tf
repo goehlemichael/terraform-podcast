@@ -4,26 +4,26 @@ provider "aws" {
   region  = "us-east-1"
 }
 
-# Cert Management
-resource "aws_acm_certificate" "cert" {
-  domain_name               = "michaelgoehle.com"
-  subject_alternative_names = ["*.michaelgoehle.com"]
-  validation_method         = "DNS"
-}
+//# Cert Management
+//resource "aws_acm_certificate" "cert" {
+//  domain_name               = "michaelgoehle.com"
+//  subject_alternative_names = ["*.michaelgoehle.com"]
+//  validation_method         = "DNS"
+//}
 
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
   name = "michaelgoehle.com"
 }
 
-# Route 53 Records
-resource "aws_route53_record" "cert_validation" {
-  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
-  zone_id = aws_route53_zone.zone.id
-  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
-  ttl = 60
-}
+//# Route 53 Records
+//resource "aws_route53_record" "cert_validation" {
+//  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
+//  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
+//  zone_id = aws_route53_zone.zone.id
+//  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+//  ttl = 60
+//}
 
 //resource "aws_route53_record" "cert_validation_alt1" {
 //  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
@@ -33,14 +33,68 @@ resource "aws_route53_record" "cert_validation" {
 //  ttl = 60
 //}
 
-resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn = aws_acm_certificate.cert.arn
+//resource "aws_acm_certificate_validation" "cert" {
+//  certificate_arn = aws_acm_certificate.cert.arn
+//
+//  validation_record_fqdns = [
+//    aws_route53_record.cert_validation.fqdn,
+////    aws_route53_record.cert_validation_alt1.fqdn,
+//  ]
+//}
 
-  validation_record_fqdns = [
-    aws_route53_record.cert_validation.fqdn,
-//    aws_route53_record.cert_validation_alt1.fqdn,
-  ]
+# SNS Topic subscription
+resource "aws_sns_topic" "podcast-errors" {
+  name = "podcast-errors"
 }
+
+# SNS Topic Policy
+resource "aws_sns_topic_policy" "default" {
+  arn = aws_sns_topic.podcast-errors.arn
+
+  policy = data.aws_iam_policy_document.sns-topic-policy.json
+}
+
+data "aws_iam_policy_document" "sns-topic-policy" {
+  policy_id = "__default_policy_ID"
+
+  statement {
+    actions = [
+      "SNS:Subscribe",
+      "SNS:SetTopicAttributes",
+      "SNS:RemovePermission",
+      "SNS:Receive",
+      "SNS:Publish",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:GetTopicAttributes",
+      "SNS:DeleteTopic",
+      "SNS:AddPermission",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+
+      values = [
+        "${var.account-id}",
+      ]
+    }
+
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    resources = [
+      aws_sns_topic.podcast-errors.arn,
+    ]
+
+    sid = "__default_statement_ID"
+  }
+}
+
+# Create a subscriber for the topic
 
 # S3 Buckets
 resource "aws_s3_bucket" "content" {
@@ -108,21 +162,18 @@ POLICY
 # Role Mangement
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Stmt1577652794517",
-      "Action": "iam:*",
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
       "Effect": "Allow",
-      "Resource": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-    },
-    {
-      "Sid": "Stmt1577652907335",
-      "Action": "iam:*",
-      "Effect": "Allow",
-      "Resource": "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      "Sid": ""
     }
   ]
 }
@@ -131,7 +182,7 @@ EOF
 
 # Lambda function management
 resource "aws_lambda_function" "podcast_xml_generator" {
-  filename      = "mp3.py"
+  filename      = "mp3.py.zip"
   function_name = "Podcast_Name_Example"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "mp3.handler"
@@ -146,24 +197,24 @@ resource "aws_lambda_function" "podcast_xml_generator" {
     variables = {
       category_one          = "category 1"
       category_two          = "category 2"
-      cloudfront_content    = "https://podcast-content-bucket-name-example.s3.amazonaws.com"
+      cloudfront_content    = "http://podcast-content-bucket-name-example.s3.amazonaws.com"
       copyright_text        = "sample copyright text"
       email                 = "example@example.com"
       explicit              = "no"
       language              = "en"
       podcast_author        = "sample author"
       podcast_des           = "sample description here"
-      podcast_img_url       = "https://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
+      podcast_img_url       = "http://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
       podcast_type          = "episodic"
-      podcast_url           = "https://podcast-rss-bucket-name-example.s3.amazonaws.com"
+      podcast_url           = "http://podcast-rss-bucket-name-example.s3.amazonaws.com"
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = "podcast-rss-bucket-name-example"
       s3_bucket_trigger     = "podcast-content-bucket-name-example"
       sub_category_one      = ""
       sub_category_two      = ""
-      website               = "http://example.com"
+      website               = "http://michaelgoehle.com"
     }
   }
 }
@@ -205,7 +256,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcastcontent.michaelgoehle.com"]
+//  aliases = ["podcastcontent.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -280,9 +331,9 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     }
   }
 
-  tags = {
-    Environment = "production"
-  }
+//  tags = {
+//    Environment = "production"
+//  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
@@ -310,7 +361,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcast.michaelgoehle.com"]
+//  aliases = ["podcast.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -385,9 +436,9 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     }
   }
 
-  tags = {
-    Environment = "production"
-  }
+//  tags = {
+//    Environment = "production"
+//  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
@@ -420,23 +471,17 @@ resource "aws_route53_record" "podcastcontent" {
   }
 }
 
-# SNS Topic subscription
-resource "aws_sns_topic" "xml_generation_error" {
-  name = "xml_generation_error"
-}
-# Create a subscriber for the topic
-
 # Cloud Watch Alarm
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_name                = "XML-Generation-Problem"
   comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "360"
+  evaluation_periods        = "240"
   metric_name               = "Errors"
   namespace                 = "AWS/Lambda"
   period                    = "360"
   statistic                 = "Average"
   threshold                 = "0"
-  alarm_actions             = [aws_sns_topic.xml_generation_error.arn]
+  alarm_actions             = [aws_sns_topic.podcast-errors.arn]
   alarm_description         = "This monitors issues with the xml file generating"
   actions_enabled           = true
 }
