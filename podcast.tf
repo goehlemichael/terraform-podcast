@@ -42,6 +42,60 @@ resource "aws_route53_zone" "zone" {
 //  ]
 //}
 
+# SNS Topic subscription
+resource "aws_sns_topic" "podcast-errors" {
+  name = "podcast-errors"
+}
+
+# SNS Topic Policy
+resource "aws_sns_topic_policy" "default" {
+  arn = aws_sns_topic.podcast-errors.arn
+
+  policy = data.aws_iam_policy_document.sns-topic-policy.json
+}
+
+data "aws_iam_policy_document" "sns-topic-policy" {
+  policy_id = "__default_policy_ID"
+
+  statement {
+    actions = [
+      "SNS:Subscribe",
+      "SNS:SetTopicAttributes",
+      "SNS:RemovePermission",
+      "SNS:Receive",
+      "SNS:Publish",
+      "SNS:ListSubscriptionsByTopic",
+      "SNS:GetTopicAttributes",
+      "SNS:DeleteTopic",
+      "SNS:AddPermission",
+    ]
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+
+      values = [
+        "${var.account-id}",
+      ]
+    }
+
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+
+    resources = [
+      aws_sns_topic.podcast-errors.arn,
+    ]
+
+    sid = "__default_statement_ID"
+  }
+}
+
+# Create a subscriber for the topic
+
 # S3 Buckets
 resource "aws_s3_bucket" "content" {
   bucket = "podcast-content-bucket-name-example"
@@ -108,21 +162,18 @@ POLICY
 # Role Mangement
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
+
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "Stmt1577652794517",
-      "Action": "iam:*",
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
       "Effect": "Allow",
-      "Resource": "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-    },
-    {
-      "Sid": "Stmt1577652907335",
-      "Action": "iam:*",
-      "Effect": "Allow",
-      "Resource": "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      "Sid": ""
     }
   ]
 }
@@ -131,7 +182,7 @@ EOF
 
 # Lambda function management
 resource "aws_lambda_function" "podcast_xml_generator" {
-  filename      = "mp3.py"
+  filename      = "mp3.py.zip"
   function_name = "Podcast_Name_Example"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "mp3.handler"
@@ -419,12 +470,6 @@ resource "aws_route53_record" "podcastcontent" {
     evaluate_target_health = false
   }
 }
-
-# SNS Topic subscription
-resource "aws_sns_topic" "xml_generation_error" {
-  name = "xml_generation_error"
-}
-# Create a subscriber for the topic
 
 # Cloud Watch Alarm
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
