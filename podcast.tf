@@ -183,7 +183,7 @@ EOF
 # Atattched s3 permission to lambda role
 resource "aws_iam_policy" "upload-to-s3" {
   name        = "upload-to-s3-from-lambda"
-  description = "A test policy"
+  description = "Allow the lambda function to create and update the xml file in the rss bucket"
 
   policy = <<EOF
 {
@@ -215,6 +215,7 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = aws_s3_bucket.content.arn
 }
 
+# to do: replace function_name with terraform variable
 resource "aws_lambda_function" "podcast_xml_generator" {
   filename      = "mp3.py.zip"
   function_name = "Podcast_Name_Example"
