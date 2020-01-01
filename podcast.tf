@@ -70,14 +70,14 @@ data "aws_iam_policy_document" "sns-topic-policy" {
       "SNS:AddPermission",
     ]
 
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceOwner"
-
-      values = [
-        "${var.account-id}",
-      ]
-    }
+//    condition {
+//      test     = "StringEquals"
+//      variable = "AWS:SourceOwner"
+//
+//      values = [
+//        $\"${var.account-id}",
+//      ]
+//    }
 
     effect = "Allow"
 
@@ -181,6 +181,14 @@ EOF
 }
 
 # Lambda function management
+resource "aws_lambda_permission" "allow_bucket" {
+  statement_id  = "AllowExecutionFromS3Bucket"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.podcast_xml_generator.arn
+  principal     = "s3.amazonaws.com"
+  source_arn    = aws_s3_bucket.content.arn
+}
+
 resource "aws_lambda_function" "podcast_xml_generator" {
   filename      = "mp3.py.zip"
   function_name = "Podcast_Name_Example"
@@ -221,7 +229,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.content.id
-
+//  depends_on = [aws]
   lambda_function {
     lambda_function_arn = aws_lambda_function.podcast_xml_generator.arn
     events              = ["s3:ObjectCreated:*"]
