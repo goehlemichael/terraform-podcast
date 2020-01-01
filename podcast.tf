@@ -231,7 +231,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
     variables = {
       category_one          = "category 1"
       category_two          = "category 2"
-      cloudfront_content    = "http://podcast-content-bucket-name-example.s3.amazonaws.com"
+      cloudfront_content    = "https://podcast-content-bucket-name-example.s3.amazonaws.com/"
       copyright_text        = "sample copyright text"
       email                 = "example@example.com"
       explicit              = "no"
@@ -242,7 +242,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
       podcast_type          = "episodic"
-      podcast_url           = "http://podcast-rss-bucket-name-example.s3.amazonaws.com"
+      podcast_url           = "https://podcast-rss-bucket-name-example.s3.amazonaws.com/"
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = "podcast-rss-bucket-name-example"
       s3_bucket_trigger     = "podcast-content-bucket-name-example"
