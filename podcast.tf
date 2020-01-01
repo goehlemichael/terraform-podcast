@@ -496,7 +496,7 @@ resource "aws_route53_record" "podcast" {
 
 resource "aws_route53_record" "podcastcontent" {
   zone_id = aws_route53_zone.zone.id
-  name    = "podcastcontent.micahaelgoehle.com"
+  name    = "podcastcontent.michaelgoehle.com"
   type    = "A"
 
   alias {
