@@ -211,7 +211,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       explicit              = "no"
       language              = "en"
       podcast_author        = "sample author"
-      podcast_des           = "sample description here"
+      podcast_desc          = "sample description here"
       podcast_img_url       = "http://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
