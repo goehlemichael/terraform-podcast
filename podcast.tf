@@ -159,7 +159,7 @@ resource "aws_s3_bucket_policy" "rss" {
 POLICY
 }
 
-# Role Mangement
+# Create role for Lambda function
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
 
@@ -179,31 +179,15 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 EOF
 }
-
-# Atattched s3 permission to lambda role
-resource "aws_iam_policy" "upload-to-s3" {
-  name        = "upload-to-s3-from-lambda"
-  description = "Allow the lambda function to create and update the xml file in the rss bucket"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": "*"
-        }
-    ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "test-attach" {
+resource "aws_iam_role_policy_attachment" "lambda-s3-trigger" {
   role       = aws_iam_role.iam_for_lambda.name
-  policy_arn = aws_iam_policy.upload-to-s3.arn
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
+resource "aws_iam_role_policy_attachment" "cloudwatch-logging" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
 
 # Lambda function management
 # allow s3 bucket to invoke lambda function
@@ -215,6 +199,7 @@ resource "aws_lambda_permission" "allow_bucket" {
   source_arn    = aws_s3_bucket.content.arn
 }
 
+# to do: cloudwatch to publish sns
 # to do: replace function_name with terraform variable
 resource "aws_lambda_function" "podcast_xml_generator" {
   filename      = "mp3.py.zip"
@@ -510,10 +495,10 @@ resource "aws_route53_record" "podcastcontent" {
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_name                = "XML-Generation-Problem"
   comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "240"
+  evaluation_periods        = "1"
   metric_name               = "Errors"
   namespace                 = "AWS/Lambda"
-  period                    = "360"
+  period                    = "300"
   statistic                 = "Average"
   threshold                 = "0"
   alarm_actions             = [aws_sns_topic.podcast-errors.arn]
