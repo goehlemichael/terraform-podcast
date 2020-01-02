@@ -189,6 +189,11 @@ resource "aws_iam_role_policy_attachment" "cloudwatch-logging" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "sns-publish" {
+  role = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
+}
+
 # Lambda function management
 # allow s3 bucket to invoke lambda function
 resource "aws_lambda_permission" "allow_bucket" {
@@ -504,4 +509,9 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_actions             = [aws_sns_topic.podcast-errors.arn]
   alarm_description         = "This monitors issues with the xml file generating"
   actions_enabled           = true
+
+  dimensions = {
+    FunctionName = aws_lambda_function.podcast_xml_generator.function_name
+    Resource     = aws_lambda_function.podcast_xml_generator.function_name
+  }
 }
