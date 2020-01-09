@@ -50,7 +50,6 @@ resource "aws_sns_topic" "podcast-errors" {
 # SNS Topic Policy
 resource "aws_sns_topic_policy" "default" {
   arn = aws_sns_topic.podcast-errors.arn
-
   policy = data.aws_iam_policy_document.sns-topic-policy.json
 }
 
@@ -58,6 +57,8 @@ data "aws_iam_policy_document" "sns-topic-policy" {
   policy_id = "__default_policy_ID"
 
   statement {
+    sid = "__default_statement_ID"
+
     actions = [
       "SNS:Subscribe",
       "SNS:SetTopicAttributes",
@@ -70,28 +71,40 @@ data "aws_iam_policy_document" "sns-topic-policy" {
       "SNS:AddPermission",
     ]
 
-//    condition {
-//      test     = "StringEquals"
-//      variable = "AWS:SourceOwner"
-//
-//      values = [
-//        $\"${var.account-id}",
-//      ]
-//    }
-
     effect = "Allow"
+    resources = [aws_sns_topic.podcast-errors.arn]
 
     principals {
       type        = "Service"
-      identifiers = ["lambda.amazonaws.com"]
+      identifiers = ["events.amazonaws.com"]
     }
-
-    resources = [
-      aws_sns_topic.podcast-errors.arn,
-    ]
-
-    sid = "__default_statement_ID"
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceOwner"
+      values = [
+//        "${var.default}",
+      ]
+    }
   }
+//  statement {
+//    sid = "2"
+//
+//    actions = ["SNS:Publish"]
+//    effect = "Allow"
+//    resources = [aws_cloudwatch_metric_alarm.podcast_xml_generation_error.arn]
+//
+//    principals {
+//      identifiers = ["events.amazonaws.com"]
+//      type = "Service"
+//    }
+//    condition {
+//      test = "StringEquals"
+//      values = [
+////        ""
+//      ]
+//      variable = "AWS:SourceOwner"
+//    }
+//  }
 }
 
 # Create a subscriber for the topic
@@ -507,6 +520,7 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   statistic                 = "Average"
   threshold                 = "0"
   alarm_actions             = [aws_sns_topic.podcast-errors.arn]
+  ok_actions                = [aws_sns_topic.podcast-errors.arn]
   alarm_description         = "This monitors issues with the xml file generating"
   actions_enabled           = true
 
