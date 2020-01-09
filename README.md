@@ -10,3 +10,9 @@ not ready to be used at all
 3) put image.jpeg in content bucket - name it image.jpeg
 4) test the lambda function executes
 5) validate that the podcast.xml file exists in the rss bucket
+
+
+To definitely do:
+1) ensure no public access to bucket (cloudfront to bucket only)
+2) certs
+

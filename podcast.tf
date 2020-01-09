@@ -3,8 +3,9 @@ provider "aws" {
   profile = "default"
   region  = "us-east-1"
 }
-
-//# Cert Management
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
+# ---------------------------------------------------------------------------------------------------------------------
 //resource "aws_acm_certificate" "cert" {
 //  domain_name               = "michaelgoehle.com"
 //  subject_alternative_names = ["*.michaelgoehle.com"]
@@ -15,8 +16,9 @@ provider "aws" {
 resource "aws_route53_zone" "zone" {
   name = "michaelgoehle.com"
 }
-
-//# Route 53 Records
+# ---------------------------------------------------------------------------------------------------------------------
+# VALIDATE HTTPS CERTIFICATE
+# ---------------------------------------------------------------------------------------------------------------------
 //resource "aws_route53_record" "cert_validation" {
 //  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
 //  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
@@ -41,13 +43,15 @@ resource "aws_route53_zone" "zone" {
 ////    aws_route53_record.cert_validation_alt1.fqdn,
 //  ]
 //}
-
-# SNS Topic subscription
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE SNS TOPIC FOR PODCAST ERRORS RESULTING FROM THE LAMBDA FUNCTION
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_sns_topic" "podcast-errors" {
   name = "podcast-errors"
 }
-
-# SNS Topic Policy
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE SNS TOPIC POLICY FOR PODCAST ERRORS
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_sns_topic_policy" "default" {
   arn = aws_sns_topic.podcast-errors.arn
   policy = data.aws_iam_policy_document.sns-topic-policy.json
@@ -108,8 +112,9 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 }
 
 # Create a subscriber for the topic
-
-# S3 Buckets
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE S3 BUCKETS FOR THE CONTENT & THE RSS FEED
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket" "content" {
   bucket = "podcast-content-bucket-name-example"
   acl    = "public-read"
@@ -122,8 +127,9 @@ resource "aws_s3_bucket" "rss" {
     index_document = "podcast.xml"
   }
 }
-
-# S3 bucket policies
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE S3 BUCKET POLICY NEED TO UPDATE
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_policy" "content" {
   bucket = aws_s3_bucket.content.id
   policy = <<POLICY
@@ -171,8 +177,9 @@ resource "aws_s3_bucket_policy" "rss" {
 }
 POLICY
 }
-
-# Create role for Lambda function
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE IAM ROLE FOR LAMBDA FUNCTION
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
 
@@ -192,11 +199,16 @@ resource "aws_iam_role" "iam_for_lambda" {
 }
 EOF
 }
+# ---------------------------------------------------------------------------------------------------------------------
+# ALLOW
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "lambda-s3-trigger" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
-
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "cloudwatch-logging" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
@@ -207,8 +219,9 @@ resource "aws_iam_role_policy_attachment" "sns-publish" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
 }
 
-# Lambda function management
-# allow s3 bucket to invoke lambda function
+# ---------------------------------------------------------------------------------------------------------------------
+# ALLOW S3 BUCKET TO INVOKE LAMBDA FUNCTION
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_lambda_permission" "allow_bucket" {
   statement_id  = "AllowExecutionFromS3Bucket"
   action        = "lambda:InvokeFunction"
@@ -216,19 +229,21 @@ resource "aws_lambda_permission" "allow_bucket" {
   principal     = "s3.amazonaws.com"
   source_arn    = aws_s3_bucket.content.arn
 }
-
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE LAMBDA FUNCTION TO GENERATE XML FOR RSS FEED
+# ---------------------------------------------------------------------------------------------------------------------
 # to do: cloudwatch to publish sns
 # to do: replace function_name with terraform variable
 resource "aws_lambda_function" "podcast_xml_generator" {
-  filename      = "mp3.py.zip"
+  filename      = "podcast.py.zip"
   function_name = "Podcast_Name_Example"
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "mp3.handler"
+  handler       = "podcast.handler"
 
   # The filebase64sha256() function is available in Terraform 0.11.12 and later
   # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
   # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = filebase64sha256("mp3.py.zip")
+  source_code_hash = filebase64sha256("podcast.py.zip")
   runtime = "python3.7"
 
   environment {
@@ -268,7 +283,9 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
   }
 }
 
-# Cloud front management
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE CLOUDFRONT DISTRIBUTIONS FOR PODCAST CONTENT & RSS FEED
+# ---------------------------------------------------------------------------------------------------------------------
 locals {
   s3_origin_id = "S3-Podcast"
 }
@@ -482,9 +499,9 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     cloudfront_default_certificate = true
   }
 }
-
-
-# AWS route 53 A records
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A RECORD FOR RSS FEED ENDPOINT
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcast" {
   zone_id = aws_route53_zone.zone.id
   name    = "podcast.michaelgoehle.com"
@@ -496,7 +513,9 @@ resource "aws_route53_record" "podcast" {
     evaluate_target_health = false
   }
 }
-
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE A RECORD FOR PODCAST CONTENT ENDPOINT
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcastcontent" {
   zone_id = aws_route53_zone.zone.id
   name    = "podcastcontent.michaelgoehle.com"
@@ -508,8 +527,9 @@ resource "aws_route53_record" "podcastcontent" {
     evaluate_target_health = false
   }
 }
-
-# Cloud Watch Alarm
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE CLOUDWATCH ALARM FOR LAMBDA FUNCTION ERRORS
+# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
   alarm_name                = "XML-Generation-Problem"
   comparison_operator       = "GreaterThanThreshold"
