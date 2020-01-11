@@ -8,7 +8,6 @@ not ready to be used at all
  - 3 iam role policy attachments
  - 1 iam role policy document
  - 1 sns topic
- - 
  - 1 lambda function
  - 2 s3 buckets (content bucket & rss feed bucket)
  - 2 cloudfront distributions
@@ -17,11 +16,12 @@ not ready to be used at all
 
 # Setup
 
-1) create folder in content bucket - name it anything
-2) put mp3 in folder just created - name it anything
-3) put image.jpeg in content bucket - name it image.jpeg
-4) test the lambda function executes
-5) validate that the podcast.xml file exists in the rss bucket
+1) Set environment variables for lambda function in podcast.tf
+2) create folder in content bucket - name it anything
+3) put mp3 in folder just created - name it anything
+4) put image.jpeg in content bucket - name it image.jpeg
+5) test the lambda function executes
+6) validate that the podcast.xml file exists in the rss bucket
 
 
 To definitely do:
