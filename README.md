@@ -56,6 +56,4 @@ troubleshooting:
 - make sure there are no folders in folders
 - folder names are your description and file names are titles
 
-
-
-after the steps in the setup,
+![Topology](podcast.jpeg)
