@@ -3,6 +3,9 @@ terraform script for provisioning infrastructure to host your own podcast
 wip
 not ready to be used at all
 
+
+![Topology](podcast.jpeg)
+
 # Infrastructure provisioned on AWS
  - 1 iam role
  - 3 iam role policy attachments
@@ -55,5 +58,3 @@ cloudfront instance will request an up to date object
 troubleshooting:
 - make sure there are no folders in folders
 - folder names are your description and file names are titles
-
-![Topology](podcast.jpeg)
