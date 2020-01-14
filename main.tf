@@ -3,6 +3,11 @@ provider "aws" {
   profile = "default"
   region  = "us-east-1"
 }
+
+variable "domain_name" {
+  type        = string
+  description = "The root domain of the podcast"
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
@@ -14,7 +19,7 @@ provider "aws" {
 
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
-  name = "michaelgoehle.com"
+  name = var.domain_name
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
