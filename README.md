@@ -19,12 +19,13 @@ not ready to be used at all
 
 # Setup
 
-1) Set environment variables for lambda function in podcast.tf
-2) create folder in content bucket - name it anything
-3) put mp3 in folder just created - name it anything
-4) put image.jpeg in content bucket - name it image.jpeg
-5) test the lambda function executes
-6) validate that the podcast.xml file exists in the rss bucket
+1) You will need a domain name ideally already purchased through route53
+2) Set environment variables for lambda function in podcast.tf
+3) create folder in content bucket - name it anything
+4) put mp3 in folder just created - name it anything
+5) put image.jpeg in content bucket - name it image.jpeg
+6) test the lambda function executes
+7) validate that the podcast.xml file exists in the rss bucket
 
 
 To definitely do:
@@ -43,7 +44,7 @@ Useful links to podcast xml guidelines
 [apple podcast connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
 
 How to use:
-You will need a domain name ideally already purchased through route53
+
 Two main buckets:
 The content bucket which stores the mp3s
 and the rss feed which is where the lambda function stores the xml file it generates

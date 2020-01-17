@@ -12,14 +12,7 @@ import (
 
 // An example of how to test the Terraform module in examples/terraform-aws-example using Terratest.
 func TestTerraformAwsExample(t *testing.T) {
-// 	t.Parallel()
-
-// 	// Give this EC2 Instance a unique ID for a name tag so we can distinguish it from any other EC2 Instance running
-// 	// in your AWS account
-// 	expectedName := fmt.Sprintf("terratest-aws-example-%s", random.UniqueId())
-//
-// 	// Pick a random AWS region to test in. This helps ensure your code works in all regions.
-// 	awsRegion := aws.GetRandomStableRegion(t, nil, nil)
+	t.Parallel()
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
@@ -45,8 +38,6 @@ func TestTerraformAwsExample(t *testing.T) {
 	// Validate your code works as expected
 
 	// Run `terraform output` to get the value of an output variable
-// 	instanceID := terraform.Output(t, terraformOptions, "instance_id")
-//
 // 	aws.AddTagsToResource(t, awsRegion, instanceID, map[string]string{"testing": "testing-tag-value"})
 
 	// Look up the tags for the given Instance ID
