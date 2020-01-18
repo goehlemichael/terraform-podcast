@@ -37,7 +37,8 @@ To definitely do:
 6) generate a subscriber when script is executed
 7) create module for everything
 8) more logging
-9) infrastructure tests, check endpoints are up, test bucket triggers lambda function
+9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
+subscriber can subscriber to topic, lambda function fail notification, tls is working
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
