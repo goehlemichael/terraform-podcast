@@ -30,7 +30,8 @@ To definitely do:
 9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
 subscriber can subscriber to topic, lambda function fail notification, tls is working
 
-improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags, api gateway
+improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags, api gateway,
+trigger transcription of audio,
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
