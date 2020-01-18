@@ -12,8 +12,8 @@ terraform script for provisioning infrastructure to host your own podcast
 # Using Infrastructure
 1) Record/Edit your podcast episode
 2) Create folder in content bucket - name it anything
-3) Upload mp3 to folder in content bucket - name it anything
-4) Upload image.jpeg in content bucket - name it image.jpeg
+3) Create a new folder in the content s3 bucket, its name = the episodes description
+4) Inside that folder upload the mp3 for the episode, its name = the episodes title
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
@@ -30,21 +30,12 @@ To definitely do:
 9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
 subscriber can subscriber to topic, lambda function fail notification, tls is working
 
-improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags
+improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags, api gateway
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
 [apple podcast connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
 
-Overview:
-
-Two main buckets:
-The content bucket which stores the mp3s
-and the rss feed bucket which is where the lambda function stores the xml file it generates
-
-To add an episode to the podcast is simple:
-1) create a new folder in the content s3 bucket, its name = the episodes description
-2) inside that folder upload the mp3 for the episode, its name = the episodes title
 
 # Infrastructure provisioned on AWS
  - 1 iam role
