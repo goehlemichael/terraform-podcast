@@ -1,10 +1,50 @@
 # terraform-podcast
 terraform script for provisioning infrastructure to host your own podcast
-wip
-not ready to be used at all
-
 
 ![Topology](podcast.jpeg)
+
+# Setup
+
+1) You need a domain name
+2) $ export TF_VAR_domain_name=example.com
+3) $ terraform apply
+
+# Using Infrastructure
+1) Record/Edit your podcast episode
+2) Create folder in content bucket - name it anything
+3) Upload mp3 to folder in content bucket - name it anything
+4) Upload image.jpeg in content bucket - name it image.jpeg
+
+# Run Tests
+    cd tests; go test -timeout 45m | tee test_output.log
+
+To definitely do:
+1) ensure no public access to bucket (cloudfront to bucket only)
+2) certs terraform
+3) lambda cloudwatch alarm is not able to publish to the sns topic
+4) create cloudfront alarm for bytes downloaded in the content bucket
+5) create a new sns topic for that cloudfront alarm
+6) generate a subscriber when script is executed
+7) create module for everything
+8) more logging
+9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
+subscriber can subscriber to topic, lambda function fail notification, tls is working
+
+improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags
+
+Useful links to podcast xml guidelines
+[google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
+[apple podcast connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
+
+Overview:
+
+Two main buckets:
+The content bucket which stores the mp3s
+and the rss feed bucket which is where the lambda function stores the xml file it generates
+
+To add an episode to the podcast is simple:
+1) create a new folder in the content s3 bucket, its name = the episodes description
+2) inside that folder upload the mp3 for the episode, its name = the episodes title
 
 # Infrastructure provisioned on AWS
  - 1 iam role
@@ -16,47 +56,3 @@ not ready to be used at all
  - 2 cloudfront distributions
  - 1 hosted zone
  
-
-# Setup
-
-1) You will need a domain name ideally already purchased through route53
-2) Set environment variables for lambda function in podcast.tf
-3) create folder in content bucket - name it anything
-4) put mp3 in folder just created - name it anything
-5) put image.jpeg in content bucket - name it image.jpeg
-6) test the lambda function executes
-7) validate that the podcast.xml file exists in the rss bucket
-
-
-To definitely do:
-1) ensure no public access to bucket (cloudfront to bucket only)
-2) certs
-3) lambda cloudwatch alarm is not able to publish to the sns topic
-4) create cloudfront alarm for bytes downloaded in the content bucket
-5) create a new sns topic for that cloudfront alarm
-6) generate a subscriber when script is executed
-7) create module for everything
-8) more logging
-9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
-subscriber can subscriber to topic, lambda function fail notification, tls is working
-
-Useful links to podcast xml guidelines
-[google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
-[apple podcast connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
-
-How to use:
-
-Two main buckets:
-The content bucket which stores the mp3s
-and the rss feed which is where the lambda function stores the xml file it generates
-
-To add an episode to the podcast its simple:
-1) create a folder in the content s3 bucket, its name will = the description of that podcasts episode
-2) inside that folder upload the mp3 for the episode, its name will = the episodes title
-
-The changes will trigger the lambda function, the xml file will update in the rss bucket, after the cache expires the 
-cloudfront instance will request an up to date object 
-
-troubleshooting:
-- make sure there are no folders in folders
-- folder names are your description and file names are titles
