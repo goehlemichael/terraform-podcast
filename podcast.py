@@ -100,10 +100,13 @@ def make_root():
             string_date_url = cloudfront_content + urllib.parse.quote(description + '/pubDate.txt')
             date = urllib.request.urlopen(string_date_url)
             publish_date = date.read().decode('utf-8')
+            # get image url
+            episode_image = cloudfront_content + urllib.parse.quote(description + '/image.jpeg')
             # item
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = str(description)
             SubElement(item, 'itunes:explicit').text = explicit
+            SubElement(item, 'itunes:image', href=episode_image)
             SubElement(item, 'title').text = title.split('.')[0]
             SubElement(item, 'pubDate').text = publish_date
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
