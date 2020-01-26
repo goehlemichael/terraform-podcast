@@ -11,11 +11,11 @@ variable "domain_name" {
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_acm_certificate" "cert" {
-//  domain_name               = "michaelgoehle.com"
-//  subject_alternative_names = ["*.michaelgoehle.com"]
-//  validation_method         = "DNS"
-//}
+resource "aws_acm_certificate" "cert" {
+  domain_name               = var.domain_name
+  subject_alternative_names = ["*.michaelgoehle.com"]
+  validation_method         = "DNS"
+}
 
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
@@ -24,34 +24,31 @@ resource "aws_route53_zone" "zone" {
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
 # ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_route53_record" "cert_validation" {
-//  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
-//  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
-//  zone_id = aws_route53_zone.zone.id
-//  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
-//  ttl = 60
-//}
+resource "aws_route53_record" "cert_validation" {
+  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
+  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
+  zone_id = aws_route53_zone.zone.id
+  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+  ttl = 60
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # Validate
 # ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_route53_record" "cert_validation_alt1" {
-//  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
-//  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
-//  zone_id = aws_route53_zone.zone.id
-//  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
-//  ttl = 60
-//}
+resource "aws_route53_record" "cert_validation_alt1" {
+  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
+  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
+  zone_id = aws_route53_zone.zone.id
+  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
+  ttl = 60
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
 # ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_acm_certificate_validation" "cert" {
-//  certificate_arn = aws_acm_certificate.cert.arn
-//
-//  validation_record_fqdns = [
-//    aws_route53_record.cert_validation.fqdn,
-////    aws_route53_record.cert_validation_alt1.fqdn,
-//  ]
-//}
+resource "aws_acm_certificate_validation" "cert" {
+  certificate_arn = aws_acm_certificate.cert.arn
+
+  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE SNS TOPIC FOR PODCAST ERRORS RESULTING FROM THE LAMBDA FUNCTION
 # ---------------------------------------------------------------------------------------------------------------------
