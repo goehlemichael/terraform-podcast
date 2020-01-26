@@ -3,7 +3,7 @@ from xml.etree import ElementTree
 import boto3, os, time
 from xml.dom import minidom
 
-import urllib.parse
+import urllib
 
 # import environment variables
 cloudfront_content = os.environ['cloudfront_content']        # content cloudfront
@@ -96,12 +96,16 @@ def make_root():
         if 'mp3' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
 
             description, title = each_s3_object['Key'].split('/')  # description = foldername, title = filename
+            # get publish dates for each episode
+            string_date_url = cloudfront_content + urllib.parse.quote(description + '/pubDate.txt')
+            date = urllib.request.urlopen(string_date_url)
+            publish_date = date.read().decode('utf-8')
             # item
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = str(description)
             SubElement(item, 'itunes:explicit').text = explicit
             SubElement(item, 'title').text = title.split('.')[0]
-            SubElement(item, 'pubDate').text = each_s3_object['LastModified'].strftime("%a, %d %b %Y %H:%M:%S %z")
+            SubElement(item, 'pubDate').text = publish_date
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
             mp3_resource = each_s3_object['Key']
             mp3_url = cloudfront_content + urllib.parse.quote(mp3_resource)
