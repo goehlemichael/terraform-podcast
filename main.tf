@@ -1,9 +1,13 @@
-# Provider AWS
+# ---------------------------------------------------------------------------------------------------------------------
+# Create Provider - AWS
+# ---------------------------------------------------------------------------------------------------------------------
 provider "aws" {
   profile = "default"
   region  = "us-east-1"
 }
-
+# ---------------------------------------------------------------------------------------------------------------------
+# Set Variable - Domain Name
+# ---------------------------------------------------------------------------------------------------------------------
 variable "domain_name" {
   type        = string
   description = "The root domain of the podcast"
@@ -46,8 +50,10 @@ resource "aws_route53_record" "cert_validation_alt1" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn = aws_acm_certificate.cert.arn
-
-  validation_record_fqdns = [aws_route53_record.cert_validation.fqdn]
+  validation_record_fqdns = [
+    aws_route53_record.cert_validation.fqdn,
+    aws_route53_record.cert_validation_alt1.fqdn
+  ]
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE SNS TOPIC FOR PODCAST ERRORS RESULTING FROM THE LAMBDA FUNCTION
