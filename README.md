@@ -14,7 +14,9 @@ terraform script for provisioning infrastructure to host your own podcast
 2) Create folder in content bucket - name it anything
 3) Create a new folder in the content s3 bucket, its name = the episodes description
 4) Inside that folder upload the mp3 for the episode, its name = the episodes title
-5) Inside that same folder upload a file named pubDate.text = the publish date of podcast
+5) Inside that same folder upload a file named pubDate.txt = the publish date of podcast
+6) Inside that same folder upload a file named duration.txt = the duration of the episode
+7) Inside that same folder upload an image named image.jpeg = the episode image (3000x3000)
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log

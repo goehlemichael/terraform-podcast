@@ -102,6 +102,10 @@ def make_root():
             publish_date = date.read().decode('utf-8')
             # get image url
             episode_image = cloudfront_content + urllib.parse.quote(description + '/image.jpeg')
+            # get episode duration
+            duration_url = cloudfront_content + urllib.parse.quote(description + '/duration.txt')
+            duration_bytes = urllib.request.urlopen(duration_url)
+            duration = duration_bytes.read().decode('utf-8')
             # item
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = str(description)
@@ -109,6 +113,7 @@ def make_root():
             SubElement(item, 'itunes:image', href=episode_image)
             SubElement(item, 'title').text = title.split('.')[0]
             SubElement(item, 'pubDate').text = publish_date
+            SubElement(item, 'itunes:duration').text = duration
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
             mp3_resource = each_s3_object['Key']
             mp3_url = cloudfront_content + urllib.parse.quote(mp3_resource)
