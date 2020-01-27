@@ -212,6 +212,10 @@ resource "aws_iam_role_policy_attachment" "lambda-s3-trigger" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
+resource "aws_iam_role_policy_attachment" "lambda-cloudwatch" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+}
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
