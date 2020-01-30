@@ -25,7 +25,7 @@ category_one = os.environ['category_one']                    # category
 sub_category_one = os.environ['sub_category_one']            # subcategory
 category_two = os.environ['category_two']                    # category two
 sub_category_two = os.environ['sub_category_two']            # subcategory two
-explicit = os.environ['explicit']                            # yes, no
+# explicit = os.environ['explicit']                            # yes, no
 
 # reformat the xml
 
@@ -57,7 +57,8 @@ def make_root():
     SubElement(channel, 'atom:link', href=podcast_url, rel='self', type='application/rss+xml')
     SubElement(channel, 'link',).text = website
     SubElement(channel, 'itunes:author').text = podcast_author
-    SubElement(channel, 'itunes:explicit').text = explicit
+    # Uncomment if explicit
+    # SubElement(channel, 'itunes:explicit').text = explicit
     SubElement(channel, 'description').text = podcast_desc
     SubElement(channel, 'itunes:type').text = podcast_type
     # channel - owner
@@ -106,9 +107,17 @@ def make_root():
             duration_url = cloudfront_content + urllib.parse.quote(description + '/duration.txt')
             duration_bytes = urllib.request.urlopen(duration_url)
             duration = duration_bytes.read().decode('utf-8')
+            # get episode description
+            description_url = cloudfront_content + urllib.parse.quote(description + '/description.txt')
+            description_bytes = urllib.request.urlopen(description_url)
+            description_text = description_bytes.read().decode('utf-8')
+            # get if explicit or not
+            string_explicit_url = cloudfront_content + urllib.parse.quote(description + '/explicit.txt')
+            explicit_bytes = urllib.request.urlopen(string_explicit_url)
+            explicit = explicit_bytes.read().decode('utf-8')
             # item
             item = SubElement(channel, 'item')
-            SubElement(item, 'description').text = str(description)
+            SubElement(item, 'description').text = description_text
             SubElement(item, 'itunes:explicit').text = explicit
             SubElement(item, 'itunes:image', href=episode_image)
             SubElement(item, 'title').text = title.split('.')[0]
