@@ -115,12 +115,16 @@ def make_root():
             string_explicit_url = cloudfront_content + urllib.parse.quote(description + '/explicit.txt')
             explicit_bytes = urllib.request.urlopen(string_explicit_url)
             explicit = explicit_bytes.read().decode('utf-8')
+            # get episode title
+            title_url = cloudfront_content + urllib.parse.quote(description + '/title.txt')
+            title_bytes = urllib.request.urlopen(title_url)
+            title_text = title_bytes.read().decode('utf-8')
             # item
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = description_text
             SubElement(item, 'itunes:explicit').text = explicit
             SubElement(item, 'itunes:image', href=episode_image)
-            SubElement(item, 'title').text = title.split('.')[0]
+            SubElement(item, 'title').text = title_text
             SubElement(item, 'pubDate').text = publish_date
             SubElement(item, 'itunes:duration').text = duration
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
