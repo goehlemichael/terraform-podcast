@@ -8,6 +8,8 @@ terraform script for provisioning infrastructure to host your own podcast
 1) You need a domain name
 2) $ export TF_VAR_domain_name=example.com
 3) $ terraform apply
+4) endpoint will be cloudfront distribution url for like d497hf4h4fsdhjd.cloudfront.com/podcast.xml
+5) then update dns to point to cloudfront
 
 # Using Infrastructure
 1) Record/Edit your podcast episode
