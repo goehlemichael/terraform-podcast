@@ -309,6 +309,10 @@ locals {
 resource "aws_cloudfront_distribution" "podcast_content" {
   origin {
     domain_name = aws_s3_bucket.content.bucket_regional_domain_name
+    custom_header {
+      name = "Accept-Ranges"
+      value = "bytes"
+    }
     origin_id   = local.s3_origin_id
 
 //    s3_origin_config {
@@ -414,6 +418,10 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 resource "aws_cloudfront_distribution" "podcast_rss" {
   origin {
     domain_name = aws_s3_bucket.rss.bucket_regional_domain_name
+    custom_header {
+      name = "Accept-Ranges"
+      value = "bytes"
+    }
     origin_id   = local.s3_origin_id
 
 //    s3_origin_config {
