@@ -18,7 +18,7 @@ variable "domain_name" {
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name
   subject_alternative_names = ["*.michaelgoehle.com"]
-  validation_method         = "DNS"
+  validation_method         = "EMAIL"
 }
 
 # Route 53 Zone
@@ -28,32 +28,28 @@ resource "aws_route53_zone" "zone" {
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_route53_record" "cert_validation" {
-  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
-  zone_id = aws_route53_zone.zone.id
-  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
-  ttl = 60
-}
+//resource "aws_route53_record" "cert_validation" {
+//  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
+//  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
+//  zone_id = aws_route53_zone.zone.id
+//  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
+//  ttl = 60
+//}
 # ---------------------------------------------------------------------------------------------------------------------
 # Validate
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_route53_record" "cert_validation_alt1" {
-  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
-  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
-  zone_id = aws_route53_zone.zone.id
-  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
-  ttl = 60
-}
+//resource "aws_route53_record" "cert_validation_alt1" {
+//  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
+//  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
+//  zone_id = aws_route53_zone.zone.id
+//  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
+//  ttl = 60
+//}
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_acm_certificate_validation" "cert" {
   certificate_arn = aws_acm_certificate.cert.arn
-  validation_record_fqdns = [
-    aws_route53_record.cert_validation.fqdn,
-    aws_route53_record.cert_validation_alt1.fqdn
-  ]
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE SNS TOPIC FOR PODCAST ERRORS RESULTING FROM THE LAMBDA FUNCTION
@@ -331,7 +327,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 //    prefix          = "myprefix"
 //  }
 
-//  aliases = ["podcastcontent.michaelgoehle.com"]
+  aliases = ["podcastcontent.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -411,7 +407,10 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 //  }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = false
+    acm_certificate_arn = aws_acm_certificate.cert.arn
+    ssl_support_method = "sni-only"
+    minimum_protocol_version  = "TLSv1.1_2016"
   }
 }
 
@@ -440,7 +439,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 //    prefix          = "myprefix"
 //  }
 
-//  aliases = ["podcast.michaelgoehle.com"]
+  aliases = ["podcast.michaelgoehle.com"]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -520,7 +519,32 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 //  }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    cloudfront_default_certificate = false
+    acm_certificate_arn = aws_acm_certificate.cert.arn
+    ssl_support_method = "sni-only"
+    minimum_protocol_version  = "TLSv1.1_2016"
+  }
+}
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE CLOUDWATCH ALARM FOR LAMBDA FUNCTION ERRORS
+# ---------------------------------------------------------------------------------------------------------------------
+resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
+  alarm_name                = "XML-Generation-Problem"
+  comparison_operator       = "GreaterThanThreshold"
+  evaluation_periods        = "1"
+  metric_name               = "Errors"
+  namespace                 = "AWS/Lambda"
+  period                    = "300"
+  statistic                 = "Average"
+  threshold                 = "0"
+  alarm_actions             = [aws_sns_topic.podcast-errors.arn]
+  ok_actions                = [aws_sns_topic.podcast-errors.arn]
+  alarm_description         = "This monitors issues with the xml file generating"
+  actions_enabled           = true
+
+  dimensions = {
+    FunctionName = aws_lambda_function.podcast_xml_generator.function_name
+    Resource     = aws_lambda_function.podcast_xml_generator.function_name
   }
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -549,27 +573,5 @@ resource "aws_route53_record" "podcastcontent" {
     name                   = aws_cloudfront_distribution.podcast_content.domain_name
     zone_id                = aws_cloudfront_distribution.podcast_content.hosted_zone_id
     evaluate_target_health = false
-  }
-}
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE CLOUDWATCH ALARM FOR LAMBDA FUNCTION ERRORS
-# ---------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
-  alarm_name                = "XML-Generation-Problem"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "1"
-  metric_name               = "Errors"
-  namespace                 = "AWS/Lambda"
-  period                    = "300"
-  statistic                 = "Average"
-  threshold                 = "0"
-  alarm_actions             = [aws_sns_topic.podcast-errors.arn]
-  ok_actions                = [aws_sns_topic.podcast-errors.arn]
-  alarm_description         = "This monitors issues with the xml file generating"
-  actions_enabled           = true
-
-  dimensions = {
-    FunctionName = aws_lambda_function.podcast_xml_generator.function_name
-    Resource     = aws_lambda_function.podcast_xml_generator.function_name
   }
 }

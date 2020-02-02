@@ -35,20 +35,4 @@ func TestTerraformAwsExample(t *testing.T) {
 	// This will run `terraform init` and `terraform apply` and fail the test if there are any errors
 	terraform.InitAndApply(t, terraformOptions)
 
-	// Validate your code works as expected
-
-	// Run `terraform output` to get the value of an output variable
-// 	aws.AddTagsToResource(t, awsRegion, instanceID, map[string]string{"testing": "testing-tag-value"})
-
-	// Look up the tags for the given Instance ID
-// 	instanceTags := aws.GetTagsForEc2Instance(t, awsRegion, instanceID)
-//
-// 	testingTag, containsTestingTag := instanceTags["testing"]
-// 	assert.True(t, containsTestingTag)
-// 	assert.Equal(t, "testing-tag-value", testingTag)
-//
-// 	// Verify that our expected name tag is one of the tags
-// 	nameTag, containsNameTag := instanceTags["Name"]
-// 	assert.True(t, containsNameTag)
-// 	assert.Equal(t, expectedName, nameTag)
 }
