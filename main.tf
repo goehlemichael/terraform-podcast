@@ -186,7 +186,7 @@ resource "aws_s3_bucket_policy" "rss" {
 POLICY
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# UPLOAD S3 BUCKET OBJECTS
+# UPLOAD S3 BUCKET OBJECTS CONTENT BUCKET
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_object" "podcast_image" {
   bucket = aws_s3_bucket.content.id
@@ -235,6 +235,15 @@ resource "aws_s3_bucket_object" "episode_explicit" {
   key    = "episode1/explicit.txt"
   source = "./podcast_example/explicit.txt"
   content_type = "text/plain"
+}
+# ---------------------------------------------------------------------------------------------------------------------
+# UPLOAD S3 BUCKET OBJECTS RSS BUCKET - This is to remove the object after teardown
+# ---------------------------------------------------------------------------------------------------------------------
+resource "aws_s3_bucket_object" "podcast_rss" {
+  bucket = aws_s3_bucket.rss.id
+  key    = "podcast.xml"
+  source = "./podcast_example/podcast.xml"
+  content_type = "application/xml"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE IAM ROLE FOR LAMBDA FUNCTION
@@ -370,7 +379,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "This distribution contains the mp3 and content for the podcast"
-  default_root_object = "index.html"
+//  default_root_object = "index.html"
 
 //  logging_config {
 //    include_cookies = false

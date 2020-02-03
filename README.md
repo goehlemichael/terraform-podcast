@@ -5,7 +5,7 @@ terraform script for provisioning infrastructure to host your own podcast
 
 # Setup
 
-1) You need a domain name
+1) You need a domain name registered
 2) $ export TF_VAR_domain_name=example.com
 3) $ terraform apply
 
@@ -27,18 +27,16 @@ terraform script for provisioning infrastructure to host your own podcast
 
 To definitely do:
 1) ensure no public access to bucket (cloudfront to bucket only)
-2) certs terraform
-3) lambda cloudwatch alarm is not able to publish to the sns topic
-4) create cloudfront alarm for bytes downloaded in the content bucket
-5) create a new sns topic for that cloudfront alarm
-6) generate a subscriber when script is executed
-7) create module for everything
-8) more logging
-9) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
+2) lambda cloudwatch alarm is not able to publish to the sns topic
+3) create cloudfront alarm for bytes downloaded in the content bucket
+4) create a new sns topic for that cloudfront alarm
+5) generate a subscriber when script is executed
+6) create module for everything
+7) more logging
+8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
 subscriber can subscriber to topic, lambda function fail notification, tls is working
 
-improvement ideas: dynamo db store creation/upload times, store mp3 id3 tags, api gateway,
-trigger transcription of audio,
+improvement ideas: dynamo db store creation/upload times, trigger transcription of audio
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
