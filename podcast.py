@@ -98,7 +98,7 @@ def make_root():
 
             description, title = each_s3_object['Key'].split('/')  # description = foldername, title = filename
             # get publish dates for each episode
-            string_date_url = cloudfront_content + urllib.parse.quote(description + '/pubDate.txt')
+            string_date_url = cloudfront_content + urllib.parse.quote(description + '/pubdate.txt')
             date = urllib.request.urlopen(string_date_url)
             publish_date = date.read().decode('utf-8')
             # get image url

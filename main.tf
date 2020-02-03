@@ -186,6 +186,57 @@ resource "aws_s3_bucket_policy" "rss" {
 POLICY
 }
 # ---------------------------------------------------------------------------------------------------------------------
+# UPLOAD S3 BUCKET OBJECTS
+# ---------------------------------------------------------------------------------------------------------------------
+resource "aws_s3_bucket_object" "podcast_image" {
+  bucket = aws_s3_bucket.content.id
+  key    = "image.jpeg"
+  source = "./podcast_example/main_image.jpeg"
+  content_type = "image/jpeg"
+}
+resource "aws_s3_bucket_object" "episode" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/episode1.mp3"
+  source = "./podcast_example/episodeexample.mp3"
+  content_type = "audio/mp3"
+}
+resource "aws_s3_bucket_object" "episode_image" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/image.jpeg"
+  source = "./podcast_example/episode_image.jpeg"
+  content_type = "image/jpeg"
+}
+resource "aws_s3_bucket_object" "episode_title" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/title.txt"
+  source = "./podcast_example/title.txt"
+  content_type = "text/plain"
+}
+resource "aws_s3_bucket_object" "episode_description" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/description.txt"
+  source = "./podcast_example/description.txt"
+  content_type = "text/plain"
+}
+resource "aws_s3_bucket_object" "episode_duration" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/duration.txt"
+  source = "./podcast_example/duration.txt"
+  content_type = "text/plain"
+}
+resource "aws_s3_bucket_object" "episode_pubdate" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/pubdate.txt"
+  source = "./podcast_example/pubdate.txt"
+  content_type = "text/plain"
+}
+resource "aws_s3_bucket_object" "episode_explicit" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/explicit.txt"
+  source = "./podcast_example/explicit.txt"
+  content_type = "text/plain"
+}
+# ---------------------------------------------------------------------------------------------------------------------
 # CREATE IAM ROLE FOR LAMBDA FUNCTION
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role" "iam_for_lambda" {
