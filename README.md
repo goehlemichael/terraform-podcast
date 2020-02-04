@@ -23,7 +23,6 @@ terraform script for provisioning infrastructure to host your own podcast
  - a file named pubDate.txt = containing the date the episode was published in RFC822 date format
  - a file named duration.txt = the duration of the episode in seconds
 
-
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
 
