@@ -291,12 +291,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   function_name = "Podcast_Name_Example"
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "podcast.handler"
-
-  # The filebase64sha256() function is available in Terraform 0.11.12 and later
-  # For Terraform 0.11.11 and earlier, use the base64sha256() function and the file() function:
-  # source_code_hash = "${base64sha256(file("lambda_function_payload.zip"))}"
-  source_code_hash = filebase64sha256("podcast.py.zip")
-  runtime = "python3.7"
+  runtime       = "python3.7"
 
   environment {
     variables = {
@@ -388,50 +383,50 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     max_ttl                = 86400
   }
 
-  # Cache behavior with precedence 0
-  ordered_cache_behavior {
-    path_pattern     = "/content/immutable/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = local.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-      headers      = ["Origin"]
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
-  }
-
-  # Cache behavior with precedence 1
-  ordered_cache_behavior {
-    path_pattern     = "/content/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = local.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
-  }
+//  # Cache behavior with precedence 0
+//  ordered_cache_behavior {
+//    path_pattern     = "/content/immutable/*"
+//    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+//    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+//    target_origin_id = local.s3_origin_id
+//
+//    forwarded_values {
+//      query_string = false
+//      headers      = ["Origin"]
+//
+//      cookies {
+//        forward = "none"
+//      }
+//    }
+//
+//    min_ttl                = 0
+//    default_ttl            = 86400
+//    max_ttl                = 31536000
+//    compress               = true
+//    viewer_protocol_policy = "redirect-to-https"
+//  }
+//
+//  # Cache behavior with precedence 1
+//  ordered_cache_behavior {
+//    path_pattern     = "/content/*"
+//    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+//    cached_methods   = ["GET", "HEAD"]
+//    target_origin_id = local.s3_origin_id
+//
+//    forwarded_values {
+//      query_string = false
+//
+//      cookies {
+//        forward = "none"
+//      }
+//    }
+//
+//    min_ttl                = 0
+//    default_ttl            = 3600
+//    max_ttl                = 86400
+//    compress               = true
+//    viewer_protocol_policy = "redirect-to-https"
+//  }
 
   price_class = "PriceClass_200"
   # Update locations later
@@ -496,50 +491,50 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     max_ttl                = 86400
   }
 
-  # Cache behavior with precedence 0
-  ordered_cache_behavior {
-    path_pattern     = "/content/immutable/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id = local.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-      headers      = ["Origin"]
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl                = 0
-    default_ttl            = 86400
-    max_ttl                = 31536000
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
-  }
-
-  # Cache behavior with precedence 1
-  ordered_cache_behavior {
-    path_pattern     = "/content/*"
-    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
-    cached_methods   = ["GET", "HEAD"]
-    target_origin_id = local.s3_origin_id
-
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl                = 0
-    default_ttl            = 3600
-    max_ttl                = 86400
-    compress               = true
-    viewer_protocol_policy = "redirect-to-https"
-  }
+//  # Cache behavior with precedence 0
+//  ordered_cache_behavior {
+//    path_pattern     = "/content/immutable/*"
+//    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+//    cached_methods   = ["GET", "HEAD", "OPTIONS"]
+//    target_origin_id = local.s3_origin_id
+//
+//    forwarded_values {
+//      query_string = false
+//      headers      = ["Origin"]
+//
+//      cookies {
+//        forward = "none"
+//      }
+//    }
+//
+//    min_ttl                = 0
+//    default_ttl            = 86400
+//    max_ttl                = 31536000
+//    compress               = true
+//    viewer_protocol_policy = "redirect-to-https"
+//  }
+//
+//  # Cache behavior with precedence 1
+//  ordered_cache_behavior {
+//    path_pattern     = "/content/*"
+//    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
+//    cached_methods   = ["GET", "HEAD"]
+//    target_origin_id = local.s3_origin_id
+//
+//    forwarded_values {
+//      query_string = false
+//
+//      cookies {
+//        forward = "none"
+//      }
+//    }
+//
+//    min_ttl                = 0
+//    default_ttl            = 3600
+//    max_ttl                = 86400
+//    compress               = true
+//    viewer_protocol_policy = "redirect-to-https"
+//  }
 
   price_class = "PriceClass_200"
   # Update locations
