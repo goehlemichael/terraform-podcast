@@ -605,8 +605,8 @@ resource "aws_route53_record" "podcastcontent" {
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE ZIP OF LAMBDA FUNCTION
 # ---------------------------------------------------------------------------------------------------------------------
-//data "archive_file" "podcast_lambda" {
-//  type        = "zip"
-//  source_file = "podcast.py"
-//  output_path = "podcast.py.zip"
-//}
+data "archive_file" "podcast_lambda" {
+  type        = "zip"
+  source_file = "podcast.py"
+  output_path = "podcast.py.zip"
+}
