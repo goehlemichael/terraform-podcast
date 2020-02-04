@@ -25,7 +25,7 @@ variable "rss_domain_name" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_acm_certificate" "cert" {
   domain_name               = var.domain_name
-  subject_alternative_names = ["*.michaelgoehle.com"]
+  subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "EMAIL"
 }
 # Route 53 Zone
@@ -319,7 +319,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       s3_bucket_trigger     = "podcast-content-bucket-name-example"
       sub_category_one      = ""
       sub_category_two      = ""
-      website               = "http://michaelgoehle.com"
+      website               = "http://${var.domain_name}"
     }
   }
 }
@@ -607,3 +607,11 @@ resource "aws_route53_record" "podcastcontent" {
     evaluate_target_health = false
   }
 }
+# ---------------------------------------------------------------------------------------------------------------------
+# CREATE ZIP OF LAMBDA FUNCTION
+# ---------------------------------------------------------------------------------------------------------------------
+//data "archive_file" "podcast_lambda" {
+//  type        = "zip"
+//  source_file = "podcast.py"
+//  output_path = "podcast.py.zip"
+//}

@@ -2,3 +2,4 @@ tests/test_output.log
 terraform*
 .terraform/
 .idea/
+podcast.py.zip
