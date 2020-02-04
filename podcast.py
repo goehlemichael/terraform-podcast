@@ -2,7 +2,6 @@ from xml.etree.ElementTree import Element, SubElement, tostring
 from xml.etree import ElementTree
 import boto3, os, time
 from xml.dom import minidom
-
 import urllib
 
 # import environment variables
@@ -49,7 +48,7 @@ def make_root():
     rss.set('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd')
     rss.set('xmlns:content', 'http://purl.org/rss/1.0/modules/content/')
     rss.set('xmlns:googleplay', 'http://www.google.com/schemas/play-podcasts/1.0')
-    # channel
+    # channel - podcast defined here
     channel = SubElement(rss, 'channel')
     SubElement(channel, 'generator').text = "https://github.com/goehlemichael/lambda-podcast"
     SubElement(channel, 'title').text = podcast_name
@@ -119,7 +118,7 @@ def make_root():
             title_url = cloudfront_content + urllib.parse.quote(description + '/title.txt')
             title_bytes = urllib.request.urlopen(title_url)
             title_text = title_bytes.read().decode('utf-8')
-            # item
+            # item - each episode defined here
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = description_text
             SubElement(item, 'itunes:explicit').text = explicit
