@@ -11,16 +11,18 @@ import (
 )
 
 // An example of how to test the Terraform module in examples/terraform-aws-example using Terratest.
-func TestTerraformAwsExample(t *testing.T) {
+func Test(t *testing.T) {
 	t.Parallel()
 
 	terraformOptions := &terraform.Options{
 		// The path to where our Terraform code is located
 		TerraformDir: "../",
 
-// 		// Variables to pass to our Terraform code using -var options
+		// Variables to pass to our Terraform code using -var options
 // 		Vars: map[string]interface{}{
 // 			"domain_name": var.domain_name,
+// 			"content_domain_name": var.content_domain_name,
+// 			"rss_domain_name": var.rss_domain_name,
 // 		},
 //
 // 		// Environment variables to set when running Terraform
