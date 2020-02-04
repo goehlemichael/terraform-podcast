@@ -7,7 +7,9 @@ terraform script for provisioning infrastructure to host your own podcast
 
 1) You need a domain name registered
 2) $ export TF_VAR_domain_name=example.com
-3) $ terraform apply
+3) $ export TF_VAR_content_domain_name=podcastcontent.example.com
+4) $ export TF_VAR_rss_domain_name=podcast.example.com
+5) $ terraform apply
 
 # Using Infrastructure
 1) Record/Edit your podcast episode

@@ -6,11 +6,19 @@ provider "aws" {
   region  = "us-east-1"
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# Set Variable - Domain Name
+# Set Variables - Domain Name, Content Sub Domain, Podcast RSS Sub Domain
 # ---------------------------------------------------------------------------------------------------------------------
 variable "domain_name" {
   type        = string
   description = "The root domain of the podcast"
+}
+variable "content_domain_name" {
+  type        = string
+  description = "The subdomain content will be served from like images, audio"
+}
+variable "rss_domain_name" {
+  type        = string
+  description = "The subdomain the rss feed will be served from"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
@@ -20,31 +28,10 @@ resource "aws_acm_certificate" "cert" {
   subject_alternative_names = ["*.michaelgoehle.com"]
   validation_method         = "EMAIL"
 }
-
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
   name = var.domain_name
 }
-# ---------------------------------------------------------------------------------------------------------------------
-# VALIDATE HTTPS CERTIFICATE
-# ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_route53_record" "cert_validation" {
-//  name    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_name
-//  type    = aws_acm_certificate.cert.domain_validation_options[0].resource_record_type
-//  zone_id = aws_route53_zone.zone.id
-//  records = [aws_acm_certificate.cert.domain_validation_options[0].resource_record_value]
-//  ttl = 60
-//}
-# ---------------------------------------------------------------------------------------------------------------------
-# Validate
-# ---------------------------------------------------------------------------------------------------------------------
-//resource "aws_route53_record" "cert_validation_alt1" {
-//  name    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_name
-//  type    = aws_acm_certificate.cert.domain_validation_options[1].resource_record_type
-//  zone_id = aws_route53_zone.zone.id
-//  records = [aws_acm_certificate.cert.domain_validation_options[1].resource_record_value]
-//  ttl = 60
-//}
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
 # ---------------------------------------------------------------------------------------------------------------------
@@ -278,19 +265,14 @@ resource "aws_iam_role_policy_attachment" "lambda-cloudwatch" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
-# ---------------------------------------------------------------------------------------------------------------------
 resource "aws_iam_role_policy_attachment" "cloudwatch-logging" {
   role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
-
 resource "aws_iam_role_policy_attachment" "sns-publish" {
   role = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
 }
-
 # ---------------------------------------------------------------------------------------------------------------------
 # ALLOW S3 BUCKET TO INVOKE LAMBDA FUNCTION
 # ---------------------------------------------------------------------------------------------------------------------
@@ -304,8 +286,6 @@ resource "aws_lambda_permission" "allow_bucket" {
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE LAMBDA FUNCTION TO GENERATE XML FOR RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
-# to do: cloudwatch to publish sns
-# to do: replace function_name with terraform variable
 resource "aws_lambda_function" "podcast_xml_generator" {
   filename      = "podcast.py.zip"
   function_name = "Podcast_Name_Example"
@@ -387,7 +367,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcastcontent.michaelgoehle.com"]
+  aliases = [var.content_domain_name]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -461,10 +441,6 @@ resource "aws_cloudfront_distribution" "podcast_content" {
       locations        = ["US", "CA", "GB", "DE"]
     }
   }
-
-//  tags = {
-//    Environment = "production"
-//  }
 
   viewer_certificate {
     cloudfront_default_certificate = false
@@ -499,7 +475,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 //    prefix          = "myprefix"
 //  }
 
-  aliases = ["podcast.michaelgoehle.com"]
+  aliases = [var.rss_domain_name]
 
   default_cache_behavior {
     allowed_methods  = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
@@ -566,17 +542,13 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
   }
 
   price_class = "PriceClass_200"
-  # Update locations later
+  # Update locations
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
       locations        = ["US", "CA", "GB", "DE"]
     }
   }
-
-//  tags = {
-//    Environment = "production"
-//  }
 
   viewer_certificate {
     cloudfront_default_certificate = false
@@ -612,7 +584,7 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcast" {
   zone_id = aws_route53_zone.zone.id
-  name    = "podcast.michaelgoehle.com"
+  name    = var.rss_domain_name
   type    = "A"
 
   alias {
@@ -626,7 +598,7 @@ resource "aws_route53_record" "podcast" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcastcontent" {
   zone_id = aws_route53_zone.zone.id
-  name    = "podcastcontent.michaelgoehle.com"
+  name    = var.content_domain_name
   type    = "A"
 
   alias {
