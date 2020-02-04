@@ -43,15 +43,3 @@ improvement ideas: dynamo db store creation/upload times, trigger transcription 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
 [apple podcast connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
-
-
-# Infrastructure provisioned on AWS
- - 1 iam role
- - 3 iam role policy attachments
- - 1 iam role policy document
- - 1 sns topic
- - 1 lambda function
- - 2 s3 buckets (content bucket & rss feed bucket)
- - 2 cloudfront distributions
- - 1 hosted zone
- 
