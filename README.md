@@ -6,15 +6,18 @@ terraform script for provisioning infrastructure to host your own podcast
 # Setup
 
 1) You need a domain name registered
-2) $ export TF_VAR_domain_name=example.com
-3) $ export TF_VAR_content_domain_name=podcastcontent.example.com
-4) $ export TF_VAR_rss_domain_name=podcast.example.com
-5) $ export TF_VAR_rss_bucket_name=podcast-rss-bucket-name-example
-6) $ export TF_VAR_content_bucket_name=podcast-content-bucket-name-example
-5) $ terraform apply
+
+
+    export TF_VAR_domain_name=example.com
+    export TF_VAR_content_domain_name=podcastcontent.example.com
+    export TF_VAR_rss_domain_name=podcast.example.com
+    export TF_VAR_rss_bucket_name=podcast-rss-bucket-name-example
+    export TF_VAR_content_bucket_name=podcast-content-bucket-name-example
+    terraform apply
 
 # Using Infrastructure
 1) Record/Edit your podcast episode
+2) From inside aws -> s3 -> your content bucket
 2) Inside the content bucket upload a file named image.jpeg = the podcast image (3000x3000px)
 3) Create folder in content bucket - name it anything, just no spaces
 4) Inside that same folder upload an mp3 for the episode - name it anything, just no spaces
@@ -27,12 +30,13 @@ terraform script for provisioning infrastructure to host your own podcast
  - a file named explicit.txt = true, false
  
 alternate - using aws cli
+From inside a folder with a single folder for each podcast episode
     
-  Download contents of s3 content bucket
+  Download contents of s3 content bucket to the directory you are in
 
     aws s3 sync s3://bucketname .
 
-  sync to the s3 content bucket
+  sync the contents of the directory you are in with the s3 content bucket
 
     aws s3 sync . s3://bucketname
     
