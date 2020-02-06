@@ -48,17 +48,28 @@ From inside a folder with a single folder for each podcast episode
 example of Organizing objects(folders) for each podcast episode:
 
 episode1/episode1.mp3
+
 episode1/image.jpeg
+
 episode1/title.txt
+
 episode1/description.txt
+
 episode1/pubdate.txt
+
 episode1/explicit.txt
 
+
 episode2/episode2.mp3
+
 episode2/image.jpeg
+
 episode2/title.txt
+
 episode2/description.txt
+
 episode2/pubdate.txt
+
 episode2/explicit.txt
 
 # Run Tests
