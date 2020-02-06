@@ -20,9 +20,35 @@ terraform script for provisioning infrastructure to host your own podcast
 6) Inside that same folder upload 
  - a file named title.txt = containing the name of the episode
  - a file named description.txt = containing the episode description
- - a file named pubDate.txt = containing the date the episode was published in RFC822 date format
+ - a file named pubdate.txt = containing the date the episode was published in RFC822 date format
  - a file named duration.txt = the duration of the episode in seconds
  - a file named explicit.txt = true, false
+ 
+alternate - using aws cli
+    
+  Download contents of s3 content bucket
+
+    aws s3 sync s3://bucketname .
+
+  sync to the s3 content bucket
+
+    aws s3 sync . s3://bucketname
+    
+example of Organizing objects(folders) for each podcast episode:
+
+episode1/episode1.mp3
+episode1/image.jpeg
+episode1/title.txt
+episode1/description.txt
+episode1/pubdate.txt
+episode1/explicit.txt
+
+episode2/episode2.mp3
+episode2/image.jpeg
+episode2/title.txt
+episode2/description.txt
+episode2/pubdate.txt
+episode2/explicit.txt  
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
@@ -35,8 +61,8 @@ To definitely do:
 5) generate a subscriber when script is executed
 6) create module for everything
 7) more logging
-8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly,
-subscriber can subscriber to topic, lambda function fail notification, tls is working
+8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly
+9) cloudwatch dashboard with metrics on cloudfront downloads
 
 improvement ideas: dynamo db store creation/upload times, trigger transcription of audio
 
