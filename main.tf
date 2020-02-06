@@ -14,11 +14,19 @@ variable "domain_name" {
 }
 variable "content_domain_name" {
   type        = string
-  description = "The subdomain content will be served from like images, audio"
+  description = "The subdomain for content like images, audio"
 }
 variable "rss_domain_name" {
   type        = string
-  description = "The subdomain the rss feed will be served from"
+  description = "The subdomain for the rss feed"
+}
+variable "rss_bucket_name" {
+  type        = string
+  description = "The name of the bucket the rss feed will be served from"
+}
+variable "content_bucket_name" {
+  type        = string
+  description = "The name of the bucket the content will be served from"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
@@ -111,12 +119,12 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 # CREATE S3 BUCKETS FOR THE CONTENT & THE RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket" "content" {
-  bucket = "podcast-content-bucket-name-example"
+  bucket = var.content_bucket_name
   acl    = "public-read"
 }
 
 resource "aws_s3_bucket" "rss" {
-  bucket = "podcast-rss-bucket-name-example"
+  bucket = var.rss_bucket_name
   acl    = "public-read"
   website {
     index_document = "podcast.xml"
@@ -136,13 +144,13 @@ resource "aws_s3_bucket_policy" "content" {
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::podcast-content-bucket-name-example/*"
+            "Resource": "arn:aws:s3:::${var.content_bucket_name}/*"
         },
         {
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::podcast-content-bucket-name-example"
+            "Resource": "arn:aws:s3:::${var.content_bucket_name}"
         }
     ]
 }
@@ -160,13 +168,13 @@ resource "aws_s3_bucket_policy" "rss" {
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::podcast-rss-bucket-name-example/*"
+            "Resource": "arn:aws:s3:::${var.rss_bucket_name}/*"
         },
         {
             "Effect": "Allow",
             "Principal": "*",
             "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::podcast-rss-bucket-name-example"
+            "Resource": "arn:aws:s3:::${var.rss_bucket_name}"
         }
     ]
 }
@@ -297,21 +305,21 @@ resource "aws_lambda_function" "podcast_xml_generator" {
     variables = {
       category_one          = "category 1"
       category_two          = "category 2"
-      cloudfront_content    = "https://podcast-content-bucket-name-example.s3.amazonaws.com/"
+      cloudfront_content    = "https://${var.content_bucket_name}.s3.amazonaws.com/"
       copyright_text        = "sample copyright text"
       email                 = "example@example.com"
       explicit              = "no"
       language              = "en"
       podcast_author        = "sample author"
       podcast_desc          = "sample description here"
-      podcast_img_url       = "https://podcast-content-bucket-name-example.s3.amazonaws.com/image.jpeg"
+      podcast_img_url       = "https://${var.content_bucket_name}.s3.amazonaws.com/image.jpeg"
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
       podcast_type          = "episodic"
-      podcast_url           = "https://podcast-rss-bucket-name-example.s3.amazonaws.com/"
+      podcast_url           = "https://${var.rss_bucket_name}.s3.amazonaws.com/"
       podcast_xml_file_name = "podcast.xml"
-      s3_bucket_rss         = "podcast-rss-bucket-name-example"
-      s3_bucket_trigger     = "podcast-content-bucket-name-example"
+      s3_bucket_rss         = "${var.rss_bucket_name}"
+      s3_bucket_trigger     = "${var.content_bucket_name}"
       sub_category_one      = ""
       sub_category_two      = ""
       website               = "http://${var.domain_name}"

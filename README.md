@@ -9,6 +9,8 @@ terraform script for provisioning infrastructure to host your own podcast
 2) $ export TF_VAR_domain_name=example.com
 3) $ export TF_VAR_content_domain_name=podcastcontent.example.com
 4) $ export TF_VAR_rss_domain_name=podcast.example.com
+5) $ export TF_VAR_rss_bucket_name=podcast-rss-bucket-name-example
+6) $ export TF_VAR_content_bucket_name=podcast-content-bucket-name-example
 5) $ terraform apply
 
 # Using Infrastructure
@@ -48,7 +50,7 @@ episode2/image.jpeg
 episode2/title.txt
 episode2/description.txt
 episode2/pubdate.txt
-episode2/explicit.txt  
+episode2/explicit.txt
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
