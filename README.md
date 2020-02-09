@@ -19,6 +19,15 @@ terraform script for provisioning infrastructure to host your own podcast
     export TF_VAR_content_bucket_name=podcast-content-bucket-name-example
     
     terraform apply
+    
+    or
+    
+    terraform apply \
+    -var 'domain_name=example.com' \
+    -var 'content_domain_name=podcastcontent.example.com' \
+    -var 'rss_domain_name=podcast.example.com' \
+    -var 'rss_bucket_name=podcast-rss-bucket-name-example' \
+    -var 'content_bucket_name=podcast-content-bucket-name-example'
 
 # Using Infrastructure
 1) Record/Edit your podcast episode
