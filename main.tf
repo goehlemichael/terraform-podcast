@@ -38,7 +38,7 @@ resource "aws_acm_certificate" "cert" {
 }
 # Route 53 Zone
 resource "aws_route53_zone" "zone" {
-  name = var.domain_name
+  name = "${var.domain_name}."
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE

@@ -6,8 +6,10 @@ terraform script for provisioning infrastructure to host your own podcast
 # Setup
 
 1) You need a domain name registered
+2) When the domain is registered you will have a hosted zone
 
-
+    terraform import aws_route53_zone.zone XXXXXXXXXXXXX
+    
     export TF_VAR_domain_name=example.com
     
     export TF_VAR_content_domain_name=podcastcontent.example.com
@@ -21,6 +23,8 @@ terraform script for provisioning infrastructure to host your own podcast
     terraform apply
     
     or
+    
+    terraform import aws_route53_zone.zone XXXXXXXXXXXXX
     
     terraform apply \
     -var 'domain_name=example.com' \
