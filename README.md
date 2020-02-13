@@ -32,16 +32,6 @@ terraform script for provisioning infrastructure to host your own podcast
 # Using Infrastructure
 1) Record/Edit your podcast episode
 2) From inside aws -> s3 -> your content bucket
-2) Inside the content bucket upload a file named image.jpeg = the podcast image (3000x3000px)
-3) Create folder in content bucket - name it anything, just no spaces
-4) Inside that same folder upload an mp3 for the episode - name it anything, just no spaces
-5) Inside that same folder upload an image named image.jpeg = the episode image (3000x3000px with 72dpi)
-6) Inside that same folder upload 
- - a file named title.txt = containing the name of the episode
- - a file named description.txt = containing the episode description
- - a file named pubdate.txt = containing the date the episode was published in RFC822 date format
- - a file named duration.txt = the duration of the episode in seconds
- - a file named explicit.txt = true, false
  
 alternate - using aws cli
 From inside a folder with a single folder for each podcast episode
@@ -54,7 +44,10 @@ From inside a folder with a single folder for each podcast episode
 
     aws s3 sync . s3://bucketname
     
-content bucket podcast organization:
+content bucket current organization:
+
+each directory is a podcast episode. Files store the episode metadata, the podcast metadata is stored as
+environment variables in the lambda function currently
 
 ```
 .
