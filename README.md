@@ -8,8 +8,6 @@ terraform script for provisioning infrastructure to host your own podcast
 1) You need a domain name registered
 2) When the domain is registered you will have a hosted zone
 
-    terraform import aws_route53_zone.zone XXXXXXXXXXXXX
-    
     export TF_VAR_domain_name=example.com
     
     export TF_VAR_content_domain_name=podcastcontent.example.com
@@ -23,8 +21,6 @@ terraform script for provisioning infrastructure to host your own podcast
     terraform apply
     
     or
-    
-    terraform import aws_route53_zone.zone XXXXXXXXXXXXX
     
     terraform apply \
     -var 'domain_name=example.com' \
@@ -58,32 +54,24 @@ From inside a folder with a single folder for each podcast episode
 
     aws s3 sync . s3://bucketname
     
-example of Organizing objects(folders) for each podcast episode:
+content bucket podcast organization:
 
-episode1/episode1.mp3
-
-episode1/image.jpeg
-
-episode1/title.txt
-
-episode1/description.txt
-
-episode1/pubdate.txt
-
-episode1/explicit.txt
-
-
-episode2/episode2.mp3
-
-episode2/image.jpeg
-
-episode2/title.txt
-
-episode2/description.txt
-
-episode2/pubdate.txt
-
-episode2/explicit.txt
+.
++-- episode1
+    +-- episode1.mp3
+    +-- image.jpeg
+    +-- title.txt
+    +-- description.txt
+    +-- pubdate.txt
+    +-- explicit.txt
++-- episode2
+    +-- episode2.mp3
+    +-- image.jpeg
+    +-- title.txt
+    +-- description.txt
+    +-- pubdate.txt
+    +-- explicit.txt
++-- image.jpeg
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
@@ -94,7 +82,7 @@ To definitely do:
 3) create cloudfront alarm for bytes downloaded in the content bucket
 4) create a new sns topic for that cloudfront alarm
 5) generate a subscriber when script is executed
-6) create module for everything
+6) modules
 7) more logging
 8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly
 9) cloudwatch dashboard with metrics on cloudfront downloads
