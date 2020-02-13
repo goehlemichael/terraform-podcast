@@ -37,7 +37,7 @@ resource "aws_acm_certificate" "cert" {
   validation_method         = "EMAIL"
 }
 # Route 53 Zone
-resource "aws_route53_zone" "zone" {
+data "aws_route53_zone" "zone" {
   name = "${var.domain_name}."
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -121,11 +121,13 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 resource "aws_s3_bucket" "content" {
   bucket = var.content_bucket_name
   acl    = "public-read"
+  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "rss" {
   bucket = var.rss_bucket_name
   acl    = "public-read"
+  region = "us-east-1"
   website {
     index_document = "podcast.xml"
   }
@@ -318,8 +320,8 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       podcast_type          = "episodic"
       podcast_url           = "https://${var.rss_bucket_name}.s3.amazonaws.com/"
       podcast_xml_file_name = "podcast.xml"
-      s3_bucket_rss         = "${var.rss_bucket_name}"
-      s3_bucket_trigger     = "${var.content_bucket_name}"
+      s3_bucket_rss         = var.rss_bucket_name
+      s3_bucket_trigger     = var.content_bucket_name
       sub_category_one      = ""
       sub_category_two      = ""
       website               = "http://${var.domain_name}"
@@ -496,7 +498,7 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
 # CREATE A RECORD FOR RSS FEED ENDPOINT
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcast" {
-  zone_id = aws_route53_zone.zone.id
+  zone_id = data.aws_route53_zone.zone.name
   name    = var.rss_domain_name
   type    = "A"
 
@@ -510,7 +512,7 @@ resource "aws_route53_record" "podcast" {
 # CREATE A RECORD FOR PODCAST CONTENT ENDPOINT
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcastcontent" {
-  zone_id = aws_route53_zone.zone.id
+  zone_id = data.aws_route53_zone.zone.name
   name    = var.content_domain_name
   type    = "A"
 
