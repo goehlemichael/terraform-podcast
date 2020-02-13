@@ -56,6 +56,7 @@ From inside a folder with a single folder for each podcast episode
     
 content bucket podcast organization:
 
+```
 .
 +-- episode1
     +-- episode1.mp3
@@ -72,6 +73,7 @@ content bucket podcast organization:
     +-- pubdate.txt
     +-- explicit.txt
 +-- image.jpeg
+```
 
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
