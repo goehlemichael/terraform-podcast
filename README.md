@@ -46,8 +46,8 @@ From inside a folder with a single folder for each podcast episode
     
 content bucket current organization:
 
-each directory is a podcast episode. Files store the episode metadata, the podcast metadata is stored as
-environment variables in the lambda function currently
+each directory is a podcast episode. Files store the episode metadata. environment variables in the lambda function store the podcast metadata.
+I plan to move this to a dynamodb table
 
 ```
 .
