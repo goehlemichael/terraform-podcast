@@ -38,7 +38,7 @@ resource "aws_acm_certificate" "cert" {
 }
 # Route 53 Zone
 data "aws_route53_zone" "zone" {
-  name = "${var.domain_name}."
+  name = "${var.domain_name}"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
@@ -498,7 +498,7 @@ resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
 # CREATE A RECORD FOR RSS FEED ENDPOINT
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcast" {
-  zone_id = data.aws_route53_zone.zone.name
+  zone_id = data.aws_route53_zone.zone.id
   name    = var.rss_domain_name
   type    = "A"
 
@@ -512,7 +512,7 @@ resource "aws_route53_record" "podcast" {
 # CREATE A RECORD FOR PODCAST CONTENT ENDPOINT
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_route53_record" "podcastcontent" {
-  zone_id = data.aws_route53_zone.zone.name
+  zone_id = data.aws_route53_zone.zone.id
   name    = var.content_domain_name
   type    = "A"
 
