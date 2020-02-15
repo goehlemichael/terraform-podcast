@@ -34,7 +34,6 @@ terraform script for provisioning infrastructure to host your own podcast
 2) From inside aws -> s3 -> your content bucket
  
 alternate - using aws cli
-From inside a folder with a single folder for each podcast episode
     
   Download contents of s3 content bucket to the directory you are in
 
@@ -44,7 +43,7 @@ From inside a folder with a single folder for each podcast episode
 
     aws s3 sync . s3://bucketname
     
-content bucket current organization:
+content bucket organization:
 
 each directory is a podcast episode. Files store the episode metadata. environment variables in the lambda function store the podcast metadata.
 I plan to move this to a dynamodb table
@@ -82,7 +81,7 @@ To definitely do:
 8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly
 9) cloudwatch dashboard with metrics on cloudfront downloads
 
-improvement ideas: dynamo db store creation/upload times, trigger transcription of audio
+improvement ideas: trigger transcription of audio
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
