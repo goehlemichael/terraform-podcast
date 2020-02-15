@@ -7,6 +7,7 @@ terraform script for provisioning infrastructure to host your own podcast
 
 1) You need a domain name registered
 2) When the domain is registered you will have a hosted zone
+3) create a certificate for the domain with *.domain as alternative
 
     export TF_VAR_domain_name=example.com
     
