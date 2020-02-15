@@ -29,22 +29,17 @@ variable "content_bucket_name" {
   description = "The name of the bucket the content will be served from"
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE HTTPS CERTIFICATE FOR THE GIVEN DOMAIN NAME
+# GET AMAZON CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_acm_certificate" "cert" {
-  domain_name               = var.domain_name
-  subject_alternative_names = ["*.${var.domain_name}"]
-  validation_method         = "EMAIL"
+# Find a certificate issued by (not imported into) ACM
+data "aws_acm_certificate" "cert" {
+  domain      = var.domain_name
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
 }
 # Route 53 Zone
 data "aws_route53_zone" "zone" {
   name = var.domain_name
-}
-# ---------------------------------------------------------------------------------------------------------------------
-# VALIDATE HTTPS CERTIFICATE
-# ---------------------------------------------------------------------------------------------------------------------
-resource "aws_acm_certificate_validation" "cert" {
-  certificate_arn = aws_acm_certificate.cert.arn
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE SNS TOPIC FOR PODCAST ERRORS RESULTING FROM THE LAMBDA FUNCTION
@@ -404,7 +399,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn = aws_acm_certificate.cert.arn
+    acm_certificate_arn = data.aws_acm_certificate.cert.arn
     ssl_support_method = "sni-only"
     minimum_protocol_version  = "TLSv1.1_2016"
   }
@@ -467,7 +462,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn = aws_acm_certificate.cert.arn
+    acm_certificate_arn = data.aws_acm_certificate.cert.arn
     ssl_support_method = "sni-only"
     minimum_protocol_version  = "TLSv1.1_2016"
   }
