@@ -317,8 +317,8 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = var.rss_bucket_name
       s3_bucket_trigger     = var.content_bucket_name
-      sub_category_one      = ""
-      sub_category_two      = ""
+      sub_category_one      = "Technology"
+      sub_category_two      = "Technology"
       website               = "http://${var.domain_name}"
     }
   }
