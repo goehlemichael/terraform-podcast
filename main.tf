@@ -38,7 +38,7 @@ resource "aws_acm_certificate" "cert" {
 }
 # Route 53 Zone
 data "aws_route53_zone" "zone" {
-  name = "${var.domain_name}"
+  name = var.domain_name
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # VALIDATE HTTPS CERTIFICATE
@@ -307,18 +307,18 @@ resource "aws_lambda_function" "podcast_xml_generator" {
     variables = {
       category_one          = "category 1"
       category_two          = "category 2"
-      cloudfront_content    = "https://${var.content_bucket_name}.s3.amazonaws.com/"
+      cloudfront_content    = "https://${var.content_domain_name}/"
       copyright_text        = "sample copyright text"
       email                 = "example@example.com"
       explicit              = "no"
       language              = "en"
       podcast_author        = "sample author"
       podcast_desc          = "sample description here"
-      podcast_img_url       = "https://${var.content_bucket_name}.s3.amazonaws.com/image.jpeg"
+      podcast_img_url       = "https://${var.content_domain_name}/image.jpeg"
       podcast_name          = "Sample Podcast Name Here"
       podcast_subtitle      = "sample subtitle"
       podcast_type          = "episodic"
-      podcast_url           = "https://${var.rss_bucket_name}.s3.amazonaws.com/"
+      podcast_url           = "https://${var.rss_domain_name}/"
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = var.rss_bucket_name
       s3_bucket_trigger     = var.content_bucket_name
