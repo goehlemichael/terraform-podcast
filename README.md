@@ -1,8 +1,7 @@
 # terraform-podcast
 Terraform script for provisioning infrastructure to host a podcast on AWS
-This is the basics you need to get a podcast up and running. There is no UI or web application
+This is the basics you need to get a podcast up and running. There is no UI or web application.
 episode creation, and updating media is done through the aws console or aws cli commands.
-It 
 
 ![Topology](podcast.jpeg)
 
@@ -21,8 +20,7 @@ It
 
 # Using Infrastructure
 1) Record/Edit your podcast episode using your choice of a media editing tool
-2) generate an mp3 and then upload that mp3 to your content bucket
-3) From inside aws -> s3 -> your content bucket
+2) Generate an mp3 and upload that mp3 to your content bucket in the aws web console
  
 alternate - using aws cli
     
