@@ -57,7 +57,11 @@ store the podcast metadata. I plan to change the design and store this text data
     +-- explicit.txt
 +-- image.jpeg
 ```
+# So what happens?
 
+Now you will have an endpoint which is your rss feed sub domain - podcast.example.com
+
+this can be shared with the major pocast directories like spotify, apple, google, etc.
 # Run Tests
     cd tests; go test -timeout 45m | tee test_output.log
 
