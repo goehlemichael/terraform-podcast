@@ -6,27 +6,82 @@ provider "aws" {
   region  = "us-east-1"
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# Set Variables - Domain Name, Content Sub Domain, Podcast RSS Sub Domain
+# Set Infrastructure Variables - Domain Name, Content Sub Domain, Podcast RSS Sub Domain, etc.
 # ---------------------------------------------------------------------------------------------------------------------
 variable "domain_name" {
   type        = string
-  description = "The root domain of the podcast"
+  description = "The root domain of the podcast i.e. example.com"
 }
 variable "content_domain_name" {
   type        = string
-  description = "The subdomain for content like images, audio"
+  description = "The subdomain for content like images, audio i.e. podcastcontent.example.com "
 }
 variable "rss_domain_name" {
   type        = string
-  description = "The subdomain for the rss feed"
+  description = "The subdomain for the rss feed i.e. podcast.example.com"
 }
 variable "rss_bucket_name" {
   type        = string
-  description = "The name of the bucket the rss feed will be served from"
+  description = "The name of the bucket the rss feed will be served from i.e. rss-bucket-name-here"
 }
 variable "content_bucket_name" {
   type        = string
-  description = "The name of the bucket the content will be served from"
+  description = "The name of the bucket the content will be served from i.e. content-bucket-name-here"
+}
+# ---------------------------------------------------------------------------------------------------------------------
+# Set Podcast Variables - Podcast name, author, email, description, etc.
+# ---------------------------------------------------------------------------------------------------------------------
+variable "podcast_name" {
+  type        = string
+  description = "The name of the podcast"
+}
+variable "podcast_subtitle" {
+  type        = string
+  description = "The subtitle of the podcast"
+}
+variable "podcast_description" {
+  type        = string
+  description = "The description of the podcast. 4000 character limit for apple"
+}
+variable "podcast_author" {
+  type        = string
+  description = "The author of the podcast"
+}
+variable "podcast_email" {
+  type        = string
+  description = "The email for the creator, this is needed for validation on some platforms like spotify"
+}
+variable "podcast_language" {
+  type        = string
+  description = "the langauge of the podcast i.e. en-us"
+}
+variable "category_one" {
+  type        = string
+  description = "The category This is a standard list i.e. Technology "
+}
+variable "category_two" {
+  type        = string
+  description = "A second category this is from a standar list i.e. Technology"
+}
+variable "subcategory_one" {
+  type        = string
+  description = "The subcategory this comes from a standard list i.e. Technology"
+}
+variable "subcategory_two" {
+  type        = string
+  description = "A second subcategory this comes from a standard list i.e. Technology"
+}
+variable "podcast_type" {
+  type        = string
+  description = "This is either episodic or series"
+}
+variable "copyright_text" {
+  type        = string
+  description = "The text that will go in the copyright tag on the rss feed"
+}
+variable "explicit" {
+  type        = string
+  description = "This is required for some platforms if the podcast contains explicit content"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # GET AMAZON CERTIFICATE FOR THE GIVEN DOMAIN NAME
@@ -300,25 +355,25 @@ resource "aws_lambda_function" "podcast_xml_generator" {
 
   environment {
     variables = {
-      category_one          = "category 1"
-      category_two          = "category 2"
+      category_one          = var.category_one
+      category_two          = var.category_two
       cloudfront_content    = "https://${var.content_domain_name}/"
-      copyright_text        = "sample copyright text"
-      email                 = "example@example.com"
-      explicit              = "no"
-      language              = "en"
-      podcast_author        = "sample author"
-      podcast_desc          = "sample description here"
+      copyright_text        = var.copyright_text
+      email                 = var.podcast_email
+      explicit              = var.explicit
+      language              = var.podcast_language
+      podcast_author        = var.podcast_author
+      podcast_desc          = var.podcast_description
       podcast_img_url       = "https://${var.content_domain_name}/image.jpeg"
-      podcast_name          = "Sample Podcast Name Here"
-      podcast_subtitle      = "sample subtitle"
-      podcast_type          = "episodic"
+      podcast_name          = var.podcast_name
+      podcast_subtitle      = var.podcast_subtitle
+      podcast_type          = var.podcast_type
       podcast_url           = "https://${var.rss_domain_name}/"
       podcast_xml_file_name = "podcast.xml"
       s3_bucket_rss         = var.rss_bucket_name
       s3_bucket_trigger     = var.content_bucket_name
-      sub_category_one      = "Technology"
-      sub_category_two      = "Technology"
+      sub_category_one      = var.subcategory_one
+      sub_category_two      = var.subcategory_two
       website               = "http://${var.domain_name}"
     }
   }

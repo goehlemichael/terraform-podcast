@@ -1,41 +1,28 @@
 # terraform-podcast
-terraform script for provisioning infrastructure to host your own podcast
-This is the basics you need to get a podcast up and running. There is no UI or application, all updates like can be made
-episode creation, and updating media can be done through the aws console or aws cli commands.
+Terraform script for provisioning infrastructure to host a podcast on AWS
+This is the basics you need to get a podcast up and running. There is no UI or web application
+episode creation, and updating media is done through the aws console or aws cli commands.
 It 
 
 ![Topology](podcast.jpeg)
 
 # Setup
 
-1) You need a domain name registered
+1) You need a domain name registered through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
 2) When the domain is registered you will have a hosted zone
-3) create a certificate for the domain with *.domain as alternative
+3) With Certificate Manager get a certificate for the domainyouchoose.com with a *.domainyouchoose.com as alternative
+4) run 'terraform apply' from the root of this directory and set variables using prompts
 
-    export TF_VAR_domain_name=example.com
+   or
+   
+   update and rename .tfvars.example file to example.tfvars
     
-    export TF_VAR_content_domain_name=podcastcontent.example.com
-    
-    export TF_VAR_rss_domain_name=podcast.example.com
-    
-    export TF_VAR_rss_bucket_name=podcast-rss-bucket-name-example
-    
-    export TF_VAR_content_bucket_name=podcast-content-bucket-name-example
-    
-    terraform apply
-    
-    or
-    
-    terraform apply \
-    -var 'domain_name=example.com' \
-    -var 'content_domain_name=podcastcontent.example.com' \
-    -var 'rss_domain_name=podcast.example.com' \
-    -var 'rss_bucket_name=podcast-rss-bucket-name-example' \
-    -var 'content_bucket_name=podcast-content-bucket-name-example'
+   terraform apply -var-file="example.tfvars"
 
 # Using Infrastructure
-1) Record/Edit your podcast episode
-2) From inside aws -> s3 -> your content bucket
+1) Record/Edit your podcast episode using your choice of a media editing tool
+2) generate an mp3 and then upload that mp3 to your content bucket
+3) From inside aws -> s3 -> your content bucket
  
 alternate - using aws cli
     
@@ -49,8 +36,8 @@ alternate - using aws cli
     
 content bucket organization:
 
-each directory is a podcast episode. Files store the episode metadata. environment variables in the lambda function store the podcast metadata.
-I plan to move this to a dynamodb table
+each directory is a podcast episode. Text files store the episode metadata. environment variables in the lambda function
+store the podcast metadata. I plan to change the design and store this text data in a dynamodb table
 
 ```
 .
