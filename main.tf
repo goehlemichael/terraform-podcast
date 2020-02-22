@@ -84,6 +84,13 @@ variable "explicit" {
   description = "This is required for some platforms if the podcast contains explicit content"
 }
 # ---------------------------------------------------------------------------------------------------------------------
+# Set Variables for TF Configuration
+# ---------------------------------------------------------------------------------------------------------------------
+variable "podcast_file_name" {
+  type        = string
+  description = "The filename for the xml file which defines the podcast rss feed"
+}
+# ---------------------------------------------------------------------------------------------------------------------
 # GET AMAZON CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
 # Find a certificate issued by (not imported into) ACM
@@ -179,7 +186,7 @@ resource "aws_s3_bucket" "rss" {
   acl    = "public-read"
   region = "us-east-1"
   website {
-    index_document = "podcast.xml"
+    index_document = var.podcast_file_name
   }
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -288,8 +295,8 @@ resource "aws_s3_bucket_object" "episode_explicit" {
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_object" "podcast_rss" {
   bucket = aws_s3_bucket.rss.id
-  key    = "podcast.xml"
-  source = "./podcast_example/podcast.xml"
+  key    = var.podcast_file_name
+  source = "./podcast_example/${var.podcast_file_name}"
   content_type = "application/xml"
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -369,7 +376,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
       podcast_subtitle      = var.podcast_subtitle
       podcast_type          = var.podcast_type
       podcast_url           = "https://${var.rss_domain_name}/"
-      podcast_xml_file_name = "podcast.xml"
+      podcast_xml_file_name = var.podcast_file_name
       s3_bucket_rss         = var.rss_bucket_name
       s3_bucket_trigger     = var.content_bucket_name
       sub_category_one      = var.subcategory_one
@@ -477,7 +484,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "Contains xml file to be shared with public directories like spotify, google podcasts, etc."
-  default_root_object = "podcast.xml"
+  default_root_object = var.podcast_file_name
 
 //  logging_config {
 //    include_cookies = false
