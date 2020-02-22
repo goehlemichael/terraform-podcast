@@ -1,7 +1,8 @@
 # terraform-podcast
 terraform script for provisioning infrastructure to host your own podcast
-This is the basics you need to get a podcast up and running. There is no UI or application, all changes can be made
-through the aws console or if you are familiar with command line you can update media via aws cli commands
+This is the basics you need to get a podcast up and running. There is no UI or application, all updates like can be made
+episode creation, and updating media can be done through the aws console or aws cli commands.
+It 
 
 ![Topology](podcast.jpeg)
 
