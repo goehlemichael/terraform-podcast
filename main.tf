@@ -240,7 +240,7 @@ resource "aws_s3_bucket_policy" "rss" {
 POLICY
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# UPLOAD S3 BUCKET OBJECTS CONTENT BUCKET
+# UPLOAD S3 BUCKET OBJECTS TO CONTENT BUCKET - GENERATES MINIMUM OBJECTS TO CREATE AN EXAMPLE PODCAST
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_object" "podcast_image" {
   bucket = aws_s3_bucket.content.id
