@@ -359,6 +359,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "podcast.handler"
   runtime       = "python3.7"
+  timeout       = "6"
 
   environment {
     variables = {
