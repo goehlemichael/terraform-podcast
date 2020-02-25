@@ -388,12 +388,10 @@ resource "aws_lambda_function" "podcast_xml_generator" {
 
 resource "aws_s3_bucket_notification" "bucket_notification" {
   bucket = aws_s3_bucket.content.id
-//  depends_on = [aws]
+
   lambda_function {
     lambda_function_arn = aws_lambda_function.podcast_xml_generator.arn
     events              = ["s3:ObjectCreated:*"]
-    filter_prefix       = "AWSLogs/"
-    filter_suffix       = ".log"
   }
 }
 
