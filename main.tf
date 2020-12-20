@@ -178,13 +178,13 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 resource "aws_s3_bucket" "content" {
   bucket = var.content_bucket_name
   acl    = "public-read"
-  region = "us-east-1"
+//  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "rss" {
   bucket = var.rss_bucket_name
   acl    = "public-read"
-  region = "us-east-1"
+//  region = "us-east-1"
   website {
     index_document = var.podcast_file_name
   }
