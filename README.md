@@ -45,6 +45,7 @@ store the podcast metadata. I plan to change the design and store this text data
     +-- title.txt
     +-- description.txt
     +-- pubdate.txt
+    +-- duration.txt
     +-- explicit.txt
 +-- episode2
     +-- episode2.mp3
@@ -52,6 +53,7 @@ store the podcast metadata. I plan to change the design and store this text data
     +-- title.txt
     +-- description.txt
     +-- pubdate.txt
+    +-- duration.txt
     +-- explicit.txt
 +-- image.jpeg
 ```
