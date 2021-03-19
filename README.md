@@ -57,26 +57,11 @@ store the podcast metadata. I plan to change the design and store this text data
     +-- explicit.txt
 +-- image.jpeg
 ```
-# So what happens?
+# what happens?
 
 Now you will have an endpoint which is your rss feed sub domain - podcast.example.com
 
 this can be shared with the major pocast directories like spotify, apple, google, etc.
-# Run Tests
-    cd tests; go test -timeout 45m | tee test_output.log
-
-To definitely do:
-1) ensure no public access to bucket (cloudfront to bucket only)
-2) lambda cloudwatch alarm is not able to publish to the sns topic
-3) create cloudfront alarm for bytes downloaded in the content bucket
-4) create a new sns topic for that cloudfront alarm
-5) generate a subscriber when script is executed
-6) modules
-7) more logging
-8) tests: rss feed test, xml validation, content/rss buckets can't be reached publicly
-9) cloudwatch dashboard with metrics on cloudfront downloads
-
-improvement ideas: trigger transcription of audio
 
 Useful links to podcast xml guidelines
 [google podcasat rss guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
