@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement
 from xml.etree import ElementTree
 import boto3, os, time
 from xml.dom import minidom
@@ -24,7 +24,7 @@ category_one = os.environ['category_one']                    # category
 sub_category_one = os.environ['sub_category_one']            # subcategory
 category_two = os.environ['category_two']                    # category two
 sub_category_two = os.environ['sub_category_two']            # subcategory two
-# explicit = os.environ['explicit']                            # yes, no
+explicit = os.environ['explicit']                            # yes, no
 
 # reformat the xml
 
@@ -56,8 +56,7 @@ def make_root():
     SubElement(channel, 'atom:link', href=podcast_url, rel='self', type='application/rss+xml')
     SubElement(channel, 'link',).text = website
     SubElement(channel, 'itunes:author').text = podcast_author
-    # Uncomment if explicit
-    # SubElement(channel, 'itunes:explicit').text = explicit
+    SubElement(channel, 'itunes:explicit').text = explicit
     SubElement(channel, 'description').text = podcast_desc
     SubElement(channel, 'itunes:type').text = podcast_type
     # channel - owner
@@ -89,7 +88,7 @@ def make_root():
     # END image
 
     s3_bucket_object = boto3.client('s3')
-    content_list = s3_bucket_object.list_objects_v2(Bucket=s3_bucket_trigger)
+    content_list = s3_bucket_object.list_objects_v2(Bucket=s3_bucket_trigger, Delimiter='episode')
 
     # for each object in the bucket create relevant xml tags
     for each_s3_object in content_list['Contents']:
@@ -130,6 +129,45 @@ def make_root():
             mp3_resource = each_s3_object['Key']
             mp3_url = cloudfront_content + urllib.parse.quote(mp3_resource)
             SubElement(item, 'enclosure', url=mp3_url, length=str(each_s3_object['Size']), type='audio/mpeg')
+            SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
+
+    for each_s3_object in content_list['Contents']:
+        if 'm4a' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
+            description2, title2 = each_s3_object['Key'].split('/')  # description = foldername, title = filename
+            # get publish dates for each episode
+            string_date_url2 = cloudfront_content + urllib.parse.quote(description2 + '/pubdate.txt')
+            date = urllib.request.urlopen(string_date_url2)
+            publish_date2 = date.read().decode('utf-8')
+            # get image url
+            episode_image2 = cloudfront_content + urllib.parse.quote(description2 + '/image.jpeg')
+            # get episode duration
+            duration_url2 = cloudfront_content + urllib.parse.quote(description2 + '/duration.txt')
+            duration_bytes2 = urllib.request.urlopen(duration_url2)
+            duration = duration_bytes2.read().decode('utf-8')
+            # get episode description
+            description_url2 = cloudfront_content + urllib.parse.quote(description2 + '/description.txt')
+            description_bytes2 = urllib.request.urlopen(description_url2)
+            description_text2 = description_bytes2.read().decode('utf-8')
+            # get if explicit or not
+            # string_explicit_url = cloudfront_content + urllib.parse.quote(description + '/explicit.txt')
+            # explicit_bytes = urllib.request.urlopen(string_explicit_url)
+            # explicit = explicit_bytes.read().decode('utf-8')
+            # get episode title
+            title_url2 = cloudfront_content + urllib.parse.quote(description2 + '/title.txt')
+            title_bytes2 = urllib.request.urlopen(title_url2)
+            title_text2 = title_bytes2.read().decode('utf-8')
+            # item - each episode defined here
+            item = SubElement(channel, 'item')
+            SubElement(item, 'description').text = description_text2
+            # SubElement(item, 'itunes:explicit').text = explicit
+            SubElement(item, 'itunes:image', href=episode_image2)
+            SubElement(item, 'title').text = title_text2
+            SubElement(item, 'pubDate').text = publish_date2
+            SubElement(item, 'itunes:duration').text = duration
+            SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
+            m4a_resource = each_s3_object['Key']
+            m4a_url = cloudfront_content + urllib.parse.quote(m4a_resource)
+            SubElement(item, 'enclosure', url=m4a_url, length=str(each_s3_object['Size']), type='audio/m4a')
             SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
 
     # upload the podcast.xml file to S3
