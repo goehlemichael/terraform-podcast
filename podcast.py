@@ -94,27 +94,27 @@ def make_root():
     for each_s3_object in content_list['Contents']:
         if 'mp3' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
 
-            description, title = each_s3_object['Key'].split('/')  # description = foldername, title = filename
+            episode, media = each_s3_object['Key'].split('/')  # episode = foldername, title = filename
             # get publish dates for each episode
-            string_date_url = cloudfront_content + urllib.parse.quote(description + '/pubdate.txt')
+            string_date_url = cloudfront_content + urllib.parse.quote(episode + '/pubdate.txt')
             date = urllib.request.urlopen(string_date_url)
             publish_date = date.read().decode('utf-8')
             # get image url
-            episode_image = cloudfront_content + urllib.parse.quote(description + '/image.jpeg')
+            episode_image = cloudfront_content + urllib.parse.quote(episode + '/image.jpeg')
             # get episode duration
-            duration_url = cloudfront_content + urllib.parse.quote(description + '/duration.txt')
+            duration_url = cloudfront_content + urllib.parse.quote(episode + '/duration.txt')
             duration_bytes = urllib.request.urlopen(duration_url)
             duration = duration_bytes.read().decode('utf-8')
             # get episode description
-            description_url = cloudfront_content + urllib.parse.quote(description + '/description.txt')
+            description_url = cloudfront_content + urllib.parse.quote(episode + '/description.txt')
             description_bytes = urllib.request.urlopen(description_url)
             description_text = description_bytes.read().decode('utf-8')
             # get if explicit or not
-            string_explicit_url = cloudfront_content + urllib.parse.quote(description + '/explicit.txt')
+            string_explicit_url = cloudfront_content + urllib.parse.quote(episode + '/explicit.txt')
             explicit_bytes = urllib.request.urlopen(string_explicit_url)
             explicit = explicit_bytes.read().decode('utf-8')
             # get episode title
-            title_url = cloudfront_content + urllib.parse.quote(description + '/title.txt')
+            title_url = cloudfront_content + urllib.parse.quote(episode + '/title.txt')
             title_bytes = urllib.request.urlopen(title_url)
             title_text = title_bytes.read().decode('utf-8')
             # item - each episode defined here
@@ -133,15 +133,15 @@ def make_root():
 
     for each_s3_object in content_list['Contents']:
         if 'm4a' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
-            description2, title2 = each_s3_object['Key'].split('/')  # description = foldername, title = filename
+            episode2, media2 = each_s3_object['Key'].split('/')  # episode2 = foldername, title = filename
             # get publish dates for each episode
-            string_date_url2 = cloudfront_content + urllib.parse.quote(description2 + '/pubdate.txt')
+            string_date_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/pubdate.txt')
             date = urllib.request.urlopen(string_date_url2)
             publish_date2 = date.read().decode('utf-8')
             # get image url
-            episode_image2 = cloudfront_content + urllib.parse.quote(description2 + '/image.jpeg')
+            episode_image2 = cloudfront_content + urllib.parse.quote(episode2 + '/image.jpeg')
             # get episode duration
-            duration_url2 = cloudfront_content + urllib.parse.quote(description2 + '/duration.txt')
+            duration_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/duration.txt')
             duration_bytes2 = urllib.request.urlopen(duration_url2)
             duration = duration_bytes2.read().decode('utf-8')
             # get episode description
@@ -153,7 +153,7 @@ def make_root():
             # explicit_bytes = urllib.request.urlopen(string_explicit_url)
             # explicit = explicit_bytes.read().decode('utf-8')
             # get episode title
-            title_url2 = cloudfront_content + urllib.parse.quote(description2 + '/title.txt')
+            title_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/title.txt')
             title_bytes2 = urllib.request.urlopen(title_url2)
             title_text2 = title_bytes2.read().decode('utf-8')
             # item - each episode defined here
