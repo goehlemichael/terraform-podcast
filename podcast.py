@@ -92,7 +92,7 @@ def make_root():
 
     # for each object in the bucket create relevant xml tags
     for each_s3_object in content_list['Contents']:
-        if 'mp3' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
+        if 'mp3' in each_s3_object['Key']:
 
             episode, media = each_s3_object['Key'].split('/')  # episode = foldername, title = filename
             # get publish dates for each episode
@@ -132,7 +132,7 @@ def make_root():
             SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
 
     for each_s3_object in content_list['Contents']:
-        if 'm4a' in each_s3_object['Key'] and '/' in each_s3_object['Key']:
+        if 'm4a' in each_s3_object['Key']:
             episode2, media2 = each_s3_object['Key'].split('/')  # episode2 = foldername, title = filename
             # get publish dates for each episode
             string_date_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/pubdate.txt')
