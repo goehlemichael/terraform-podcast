@@ -110,9 +110,9 @@ def make_root():
             description_bytes = urllib.request.urlopen(description_url)
             description_text = description_bytes.read().decode('utf-8')
             # get if explicit or not
-            string_explicit_url = cloudfront_content + urllib.parse.quote(episode + '/explicit.txt')
-            explicit_bytes = urllib.request.urlopen(string_explicit_url)
-            explicit = explicit_bytes.read().decode('utf-8')
+            # string_explicit_url = cloudfront_content + urllib.parse.quote(episode + '/explicit.txt')
+            # explicit_bytes = urllib.request.urlopen(string_explicit_url)
+            # explicit = explicit_bytes.read().decode('utf-8')
             # get episode title
             title_url = cloudfront_content + urllib.parse.quote(episode + '/title.txt')
             title_bytes = urllib.request.urlopen(title_url)
