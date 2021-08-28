@@ -9,6 +9,10 @@ variable "content_domain_name" {
   type        = string
   description = "The subdomain for media, i.e. podcastcontent.example.com as a relative url"
 }
+variable "log_bucket_name" {
+  type        = string
+  description = "The bucket for logs"
+}
 variable "rss_domain_name" {
   type        = string
   description = "The subdomain for the rss feed i.e. podcast.example.com"
@@ -174,10 +178,15 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 
 # Create a subscriber for the topic
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE S3 BUCKETS FOR THE CONTENT & THE RSS FEED
+# CREATE S3 BUCKETS FOR THE MEDIA CONTENT, RSS FEED, AND BUCKET TO SEND CLOUDFRONT LOGS
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
   comment = "To restrict access to s3 bucket"
+}
+
+resource "aws_s3_bucket" "logs" {
+  bucket = var.log_bucket_name
+  acl    = "private"
 }
 
 resource "aws_s3_bucket" "content" {
@@ -361,6 +370,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   handler       = "podcast.handler"
   runtime       = "python3.7"
   timeout       = "60"
+  source_code_hash = filebase64sha256("podcast.py.zip")
 
   environment {
     variables = {
@@ -421,13 +431,12 @@ resource "aws_cloudfront_distribution" "podcast_content" {
   enabled             = true
   is_ipv6_enabled     = true
   comment             = "This distribution serves the media for the podcast"
-//  default_root_object = "index.html"
 
-//  logging_config {
-//    include_cookies = false
-//    bucket          = "mylogs.s3.amazonaws.com"
-//    prefix          = "myprefix"
-//  }
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.logs.bucket_domain_name
+    prefix          = "media"
+  }
 
   aliases = [var.content_domain_name]
 
@@ -486,11 +495,11 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
   comment             = "Contains xml file to be shared with public directories like spotify, google podcasts, etc."
   default_root_object = var.podcast_file_name
 
-//  logging_config {
-//    include_cookies = false
-//    bucket          = "mylogs.s3.amazonaws.com"
-//    prefix          = "myprefix"
-//  }
+  logging_config {
+    include_cookies = false
+    bucket          = aws_s3_bucket.logs.bucket_domain_name
+    prefix          = "rss"
+  }
 
   aliases = [var.rss_domain_name]
 
@@ -586,4 +595,5 @@ data "archive_file" "podcast_lambda" {
   type        = "zip"
   source_file = "podcast.py"
   output_path = "podcast.py.zip"
+  output_file_mode = "0666"
 }
