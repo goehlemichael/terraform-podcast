@@ -249,6 +249,12 @@ resource "aws_s3_bucket_object" "episode" {
   source = "./podcast_example/episodeexample.mp3"
   content_type = "audio/mp3"
 }
+resource "aws_s3_bucket_object" "episode_type" {
+  bucket = aws_s3_bucket.content.id
+  key    = "episode1/episodetype.txt"
+  source = "./podcast_example/episodetype.txt"
+  content_type = "text/plain"
+}
 resource "aws_s3_bucket_object" "episode_image" {
   bucket = aws_s3_bucket.content.id
   key    = "episode1/image.jpeg"
@@ -470,9 +476,9 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     }
     origin_id   = local.s3_origin_id
 
-//    s3_origin_config {
-//      origin_access_identity = "origin-access-identity/cloudfront/ABCDEFG1234567"
-//    }
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
