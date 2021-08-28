@@ -117,6 +117,10 @@ def make_root():
             title_url = cloudfront_content + urllib.parse.quote(episode + '/title.txt')
             title_bytes = urllib.request.urlopen(title_url)
             title_text = title_bytes.read().decode('utf-8')
+            # get episode type
+            episode_type = cloudfront_content + urllib.parse.quote(description + '/episodetype.txt')
+            episode_type_bytes = urllib.request.urlopen(episode_type)
+            episode_type_text = episode_type_bytes.read().decode('utf-8')
             # item - each episode defined here
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = description_text
@@ -125,6 +129,7 @@ def make_root():
             SubElement(item, 'title').text = title_text
             SubElement(item, 'pubDate').text = publish_date
             SubElement(item, 'itunes:duration').text = duration
+            SubElement(item, 'itunes:episodeType').text = episode_type_text
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
             mp3_resource = each_s3_object['Key']
             mp3_url = cloudfront_content + urllib.parse.quote(mp3_resource)
@@ -156,6 +161,10 @@ def make_root():
             title_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/title.txt')
             title_bytes2 = urllib.request.urlopen(title_url2)
             title_text2 = title_bytes2.read().decode('utf-8')
+            # get episode type
+            episode_type2 = cloudfront_content + urllib.parse.quote(description2 + '/episodeType.txt')
+            episode_type_bytes2 = urllib.request.urlopen(episode_type2)
+            episode_type_text2 = episode_type_bytes2.read().decode('utf-8')
             # item - each episode defined here
             item = SubElement(channel, 'item')
             SubElement(item, 'description').text = description_text2
@@ -164,6 +173,7 @@ def make_root():
             SubElement(item, 'title').text = title_text2
             SubElement(item, 'pubDate').text = publish_date2
             SubElement(item, 'itunes:duration').text = duration
+            SubElement(item, 'itunes:episodeType').text = episode_type_text2
             SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
             m4a_resource = each_s3_object['Key']
             m4a_url = cloudfront_content + urllib.parse.quote(m4a_resource)
