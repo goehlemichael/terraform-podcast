@@ -420,7 +420,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "This distribution contains the mp3 and content for the podcast"
+  comment             = "This distribution serves the media for the podcast"
 //  default_root_object = "index.html"
 
 //  logging_config {
@@ -463,7 +463,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     cloudfront_default_certificate = false
     acm_certificate_arn = data.aws_acm_certificate.cert.arn
     ssl_support_method = "sni-only"
-    minimum_protocol_version  = "TLSv1.1_2016"
+    minimum_protocol_version  = "TLSv1.2_2021"
   }
 }
 
@@ -526,7 +526,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     cloudfront_default_certificate = false
     acm_certificate_arn = data.aws_acm_certificate.cert.arn
     ssl_support_method = "sni-only"
-    minimum_protocol_version  = "TLSv1.1_2016"
+    minimum_protocol_version  = "TLSv1.2_2021"
   }
 }
 # ---------------------------------------------------------------------------------------------------------------------
