@@ -3,11 +3,11 @@
 # ---------------------------------------------------------------------------------------------------------------------
 variable "domain_name" {
   type        = string
-  description = "The root domain of the podcast i.e. example.com"
+  description = "The root domain of the podcast i.e. example.com as a relative URL"
 }
 variable "content_domain_name" {
   type        = string
-  description = "The subdomain for content like images, audio i.e. podcastcontent.example.com "
+  description = "The subdomain for media, i.e. podcastcontent.example.com as a relative url"
 }
 variable "rss_domain_name" {
   type        = string
@@ -34,7 +34,11 @@ variable "podcast_subtitle" {
 }
 variable "podcast_description" {
   type        = string
-  description = "The description of the podcast. 4000 character limit for apple"
+  description = "The description of the podcast. 4000 byte limit."
+  validation {
+    condition = length(var.podcast_description) <= 4000
+    error_message = "Description text is greater than 4000 bytes."
+  }
 }
 variable "podcast_author" {
   type        = string
@@ -42,11 +46,15 @@ variable "podcast_author" {
 }
 variable "podcast_email" {
   type        = string
-  description = "The email for the creator, this is needed for validation on some platforms like spotify"
+  description = "Valid email for author, RFC-5322"
 }
 variable "podcast_language" {
   type        = string
-  description = "the langauge of the podcast i.e. en-us"
+  description = "the language of the podcast ISO-639-1"
+//  validation {
+//    condition = can(regex("",) var.podcast_email)
+//    error_message = "Not a valid URL"
+//  }
 }
 variable "category_one" {
   type        = string
@@ -54,7 +62,7 @@ variable "category_one" {
 }
 variable "category_two" {
   type        = string
-  description = "A second category this is from a standar list i.e. Technology"
+  description = "A second category this is from a standard list i.e. Technology"
 }
 variable "subcategory_one" {
   type        = string
@@ -86,7 +94,7 @@ variable "podcast_file_name" {
 # ---------------------------------------------------------------------------------------------------------------------
 # GET AMAZON CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
-# Find a certificate issued by (not imported into) ACM
+# Find a certificate issued by ACM (not imported cert)
 data "aws_acm_certificate" "cert" {
   domain      = var.domain_name
   types       = ["AMAZON_ISSUED"]
@@ -352,7 +360,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "podcast.handler"
   runtime       = "python3.7"
-  timeout       = "6"
+  timeout       = "60"
 
   environment {
     variables = {
@@ -447,7 +455,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations        = ["US", "CA", "GB", "DE"]
+      locations        = ["US"]
     }
   }
 
@@ -510,7 +518,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
   restrictions {
     geo_restriction {
       restriction_type = "whitelist"
-      locations        = ["US", "CA", "GB", "DE"]
+      locations        = ["US"]
     }
   }
 
