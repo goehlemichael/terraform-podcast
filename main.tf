@@ -176,16 +176,18 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE S3 BUCKETS FOR THE CONTENT & THE RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
+resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
+  comment = "To restrict access to s3 bucket"
+}
+
 resource "aws_s3_bucket" "content" {
   bucket = var.content_bucket_name
   acl    = "public-read"
-//  region = "us-east-1"
 }
 
 resource "aws_s3_bucket" "rss" {
   bucket = var.rss_bucket_name
   acl    = "public-read"
-//  region = "us-east-1"
   website {
     index_document = var.podcast_file_name
   }
@@ -200,17 +202,13 @@ resource "aws_s3_bucket_policy" "content" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "PublicReadGetObject",
+            "Sid": "1",
             "Effect": "Allow",
-            "Principal": "*",
+            "Principal": {
+                "AWS": "${aws_cloudfront_origin_access_identity.cloudfront_access_id.iam_arn}"
+            },
             "Action": "s3:GetObject",
             "Resource": "arn:aws:s3:::${var.content_bucket_name}/*"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::${var.content_bucket_name}"
         }
     ]
 }
@@ -224,17 +222,13 @@ resource "aws_s3_bucket_policy" "rss" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "PublicReadGetObject",
+            "Sid": "1",
             "Effect": "Allow",
-            "Principal": "*",
+            "Principal": {
+                "AWS": "${aws_cloudfront_origin_access_identity.cloudfront_access_id.iam_arn}"
+            },
             "Action": "s3:GetObject",
             "Resource": "arn:aws:s3:::${var.rss_bucket_name}/*"
-        },
-        {
-            "Effect": "Allow",
-            "Principal": "*",
-            "Action": "s3:ListBucket",
-            "Resource": "arn:aws:s3:::${var.rss_bucket_name}"
         }
     ]
 }
@@ -413,9 +407,9 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     }
     origin_id   = local.s3_origin_id
 
-//    s3_origin_config {
-//      origin_access_identity = "origin-access-identity/cloudfront/ABCDEFG1234567"
-//    }
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
