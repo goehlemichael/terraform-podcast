@@ -28,26 +28,32 @@ Episode creation, and updating media is done through the aws console or aws cli 
 ## Using Infrastructure
 
 1) Record/Edit your podcast episode using your choice of a media editing tool
-2) Generate an mp3 and upload that mp3 to your content bucket in the aws web console
+2) Export an mp3 and upload that mp3 to your content bucket in the aws web console
 
    alternate - using aws cli
 
    Download contents of s3 content bucket to the directory you are in
 
    ```bash
-   aws s3 sync s3://bucketname .
+   aws s3 sync s3://<MEDIA BUCKET> .
    ```
 
    sync the contents of the directory you are in with the s3 content bucket
 
    ```bash
-   aws s3 sync . s3://bucketname
+   aws s3 sync . s3://<MEDIA BUCKET NAME>
+   ```
+
+3) Invalidate the cloudfront cache <ID> = media distribution id
+
+   ```bash
+   aws cloudfront create-invalidation --distribution-id <ID> --paths "/podcast.xml"
    ```
 
 ### Content bucket organization
 
-Each directory is a podcast episode. Text files store the episode metadata. environment variables in the lambda function
-store the podcast metadata. I plan to change the design and store this text data in a dynamodb table
+Podcast episodes are configured using the structure below in the media bucket. Environment variables in the lambda function
+are used to configure the podcast.
 
 ```bash
 .

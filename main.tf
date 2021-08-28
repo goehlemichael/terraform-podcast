@@ -597,3 +597,10 @@ data "archive_file" "podcast_lambda" {
   output_path = "podcast.py.zip"
   output_file_mode = "0666"
 }
+# ---------------------------------------------------------------------------------------------------------------------
+# OUTPUT VARIABLES
+# ---------------------------------------------------------------------------------------------------------------------
+output "podcast_url" {
+  value       = aws_lambda_function.podcast_xml_generator.environment[0].variables.podcast_url
+  description = "This is the url to reach the rss feed for the podcast"
+}
