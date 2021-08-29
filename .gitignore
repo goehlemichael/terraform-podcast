@@ -4,3 +4,4 @@ terraform*
 .idea/
 podcast.py.zip
 *.tfvars
+*.auto.tfvars
