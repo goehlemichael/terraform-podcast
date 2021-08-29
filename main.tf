@@ -90,6 +90,7 @@ resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
 resource "aws_s3_bucket" "logs" {
   bucket = var.log_bucket_name
   acl    = "private"
+  force_destroy = true
 }
 
 resource "aws_s3_bucket" "content" {
