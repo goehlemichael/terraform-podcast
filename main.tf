@@ -1,101 +1,4 @@
 # ---------------------------------------------------------------------------------------------------------------------
-# Set Infrastructure Variables - Domain Name, Content Sub Domain, Podcast RSS Sub Domain, etc.
-# ---------------------------------------------------------------------------------------------------------------------
-variable "domain_name" {
-  type        = string
-  description = "The root domain of the podcast i.e. example.com as a relative URL"
-}
-variable "content_domain_name" {
-  type        = string
-  description = "The subdomain for media, i.e. podcastcontent.example.com as a relative url"
-}
-variable "log_bucket_name" {
-  type        = string
-  description = "The bucket for logs"
-}
-variable "rss_domain_name" {
-  type        = string
-  description = "The subdomain for the rss feed i.e. podcast.example.com"
-}
-variable "rss_bucket_name" {
-  type        = string
-  description = "The name of the bucket the rss feed will be served from i.e. rss-bucket-name-here"
-}
-variable "content_bucket_name" {
-  type        = string
-  description = "The name of the bucket the content will be served from i.e. content-bucket-name-here"
-}
-# ---------------------------------------------------------------------------------------------------------------------
-# Set Podcast Variables - Podcast name, author, email, description, etc.
-# ---------------------------------------------------------------------------------------------------------------------
-variable "podcast_name" {
-  type        = string
-  description = "The name of the podcast"
-}
-variable "podcast_subtitle" {
-  type        = string
-  description = "The subtitle of the podcast"
-}
-variable "podcast_description" {
-  type        = string
-  description = "The description of the podcast. 4000 byte limit."
-  validation {
-    condition = length(var.podcast_description) <= 4000
-    error_message = "Description text is greater than 4000 bytes."
-  }
-}
-variable "podcast_author" {
-  type        = string
-  description = "The author of the podcast"
-}
-variable "podcast_email" {
-  type        = string
-  description = "Valid email for author, RFC-5322"
-}
-variable "podcast_language" {
-  type        = string
-  description = "the language of the podcast ISO-639-1"
-//  validation {
-//    condition = can(regex("",) var.podcast_email)
-//    error_message = "Not a valid URL"
-//  }
-}
-variable "category_one" {
-  type        = string
-  description = "The category This is a standard list i.e. Technology "
-}
-variable "category_two" {
-  type        = string
-  description = "A second category this is from a standard list i.e. Technology"
-}
-variable "subcategory_one" {
-  type        = string
-  description = "The subcategory this comes from a standard list i.e. Technology"
-}
-variable "subcategory_two" {
-  type        = string
-  description = "A second subcategory this comes from a standard list i.e. Technology"
-}
-variable "podcast_type" {
-  type        = string
-  description = "This is either episodic or series"
-}
-variable "copyright_text" {
-  type        = string
-  description = "The text that will go in the copyright tag on the rss feed"
-}
-variable "explicit" {
-  type        = string
-  description = "This is required for some platforms if the podcast contains explicit content"
-}
-# ---------------------------------------------------------------------------------------------------------------------
-# Set Variables for TF Configuration
-# ---------------------------------------------------------------------------------------------------------------------
-variable "podcast_file_name" {
-  type        = string
-  description = "The filename for the xml file which defines the podcast rss feed"
-}
-# ---------------------------------------------------------------------------------------------------------------------
 # GET AMAZON CERTIFICATE FOR THE GIVEN DOMAIN NAME
 # ---------------------------------------------------------------------------------------------------------------------
 # Find a certificate issued by ACM (not imported cert)
@@ -118,7 +21,7 @@ resource "aws_sns_topic" "podcast-errors" {
 # CREATE SNS TOPIC POLICY FOR PODCAST ERRORS
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_sns_topic_policy" "default" {
-  arn = aws_sns_topic.podcast-errors.arn
+  arn    = aws_sns_topic.podcast-errors.arn
   policy = data.aws_iam_policy_document.sns-topic-policy.json
 }
 
@@ -140,7 +43,7 @@ data "aws_iam_policy_document" "sns-topic-policy" {
       "SNS:AddPermission",
     ]
 
-    effect = "Allow"
+    effect    = "Allow"
     resources = [aws_sns_topic.podcast-errors.arn]
 
     principals {
@@ -151,29 +54,29 @@ data "aws_iam_policy_document" "sns-topic-policy" {
       test     = "StringEquals"
       variable = "AWS:SourceOwner"
       values = [
-//        "${var.default}",
+        //        "${var.default}",
       ]
     }
   }
-//  statement {
-//    sid = "2"
-//
-//    actions = ["SNS:Publish"]
-//    effect = "Allow"
-//    resources = [aws_cloudwatch_metric_alarm.podcast_xml_generation_error.arn]
-//
-//    principals {
-//      identifiers = ["events.amazonaws.com"]
-//      type = "Service"
-//    }
-//    condition {
-//      test = "StringEquals"
-//      values = [
-////        ""
-//      ]
-//      variable = "AWS:SourceOwner"
-//    }
-//  }
+  //  statement {
+  //    sid = "2"
+  //
+  //    actions = ["SNS:Publish"]
+  //    effect = "Allow"
+  //    resources = [aws_cloudwatch_metric_alarm.podcast_xml_generation_error.arn]
+  //
+  //    principals {
+  //      identifiers = ["events.amazonaws.com"]
+  //      type = "Service"
+  //    }
+  //    condition {
+  //      test = "StringEquals"
+  //      values = [
+  ////        ""
+  //      ]
+  //      variable = "AWS:SourceOwner"
+  //    }
+  //  }
 }
 
 # Create a subscriber for the topic
@@ -256,66 +159,66 @@ POLICY
 # UPLOAD S3 BUCKET OBJECTS TO CONTENT BUCKET - GENERATES MINIMUM OBJECTS TO CREATE AN EXAMPLE PODCAST
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_object" "podcast_image" {
-  bucket = aws_s3_bucket.content.id
-  key    = "image.jpeg"
-  source = "./podcast_example/podcast/image.jpeg"
+  bucket       = aws_s3_bucket.content.id
+  key          = "image.jpeg"
+  source       = "./podcast_example/podcast/image.jpeg"
   content_type = "image/jpeg"
 }
 resource "aws_s3_bucket_object" "episode" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/episode1.mp3"
-  source = "./podcast_example/podcast/episode1/episode1.mp3"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/episode1.mp3"
+  source       = "./podcast_example/podcast/episode1/episode1.mp3"
   content_type = "audio/mp3"
 }
 resource "aws_s3_bucket_object" "episode_type" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/episodetype.txt"
-  source = "./podcast_example/podcast/episode1/episodetype.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/episodetype.txt"
+  source       = "./podcast_example/podcast/episode1/episodetype.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_image" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/image.jpeg"
-  source = "./podcast_example/podcast/episode1/image.jpeg"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/image.jpeg"
+  source       = "./podcast_example/podcast/episode1/image.jpeg"
   content_type = "image/jpeg"
 }
 resource "aws_s3_bucket_object" "episode_title" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/title.txt"
-  source = "./podcast_example/podcast/episode1/title.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/title.txt"
+  source       = "./podcast_example/podcast/episode1/title.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_description" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/description.txt"
-  source = "./podcast_example/podcast/episode1/description.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/description.txt"
+  source       = "./podcast_example/podcast/episode1/description.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_duration" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/duration.txt"
-  source = "./podcast_example/podcast/episode1/duration.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/duration.txt"
+  source       = "./podcast_example/podcast/episode1/duration.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_pubdate" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/pubdate.txt"
-  source = "./podcast_example/podcast/episode1/pubdate.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/pubdate.txt"
+  source       = "./podcast_example/podcast/episode1/pubdate.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_explicit" {
-  bucket = aws_s3_bucket.content.id
-  key    = "episode1/explicit.txt"
-  source = "./podcast_example/podcast/episode1/explicit.txt"
+  bucket       = aws_s3_bucket.content.id
+  key          = "episode1/explicit.txt"
+  source       = "./podcast_example/podcast/episode1/explicit.txt"
   content_type = "text/plain"
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # UPLOAD S3 BUCKET OBJECTS RSS BUCKET - This is to remove the object after teardown
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_object" "podcast_rss" {
-  bucket = aws_s3_bucket.rss.id
-  key    = var.podcast_file_name
-  source = "./podcast_example/rss/${var.podcast_file_name}"
+  bucket       = aws_s3_bucket.rss.id
+  key          = var.podcast_file_name
+  source       = "./podcast_example/rss/${var.podcast_file_name}"
   content_type = "application/xml"
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -356,7 +259,7 @@ resource "aws_iam_role_policy_attachment" "cloudwatch-logging" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 resource "aws_iam_role_policy_attachment" "sns-publish" {
-  role = aws_iam_role.iam_for_lambda.name
+  role       = aws_iam_role.iam_for_lambda.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonSNSFullAccess"
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -373,12 +276,12 @@ resource "aws_lambda_permission" "allow_bucket" {
 # CREATE LAMBDA FUNCTION TO GENERATE XML FOR RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_lambda_function" "podcast_xml_generator" {
-  filename      = "podcast.py.zip"
-  function_name = "Podcast_Name_Example"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "podcast.handler"
-  runtime       = "python3.7"
-  timeout       = "60"
+  filename         = "podcast.py.zip"
+  function_name    = "Podcast_Name_Example"
+  role             = aws_iam_role.iam_for_lambda.arn
+  handler          = "podcast.handler"
+  runtime          = "python3.7"
+  timeout          = "60"
   source_code_hash = filebase64sha256("podcast.py.zip")
 
   environment {
@@ -427,19 +330,19 @@ resource "aws_cloudfront_distribution" "podcast_content" {
   origin {
     domain_name = aws_s3_bucket.content.bucket_regional_domain_name
     custom_header {
-      name = "Accept-Ranges"
+      name  = "Accept-Ranges"
       value = "bytes"
     }
-    origin_id   = local.s3_origin_id
+    origin_id = local.s3_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
     }
   }
 
-  enabled             = true
-  is_ipv6_enabled     = true
-  comment             = "This distribution serves the media for the podcast"
+  enabled         = true
+  is_ipv6_enabled = true
+  comment         = "This distribution serves the media for the podcast"
 
   logging_config {
     include_cookies = false
@@ -479,9 +382,9 @@ resource "aws_cloudfront_distribution" "podcast_content" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn = data.aws_acm_certificate.cert.arn
-    ssl_support_method = "sni-only"
-    minimum_protocol_version  = "TLSv1.2_2021"
+    acm_certificate_arn            = data.aws_acm_certificate.cert.arn
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1.2_2021"
   }
 }
 
@@ -489,10 +392,10 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
   origin {
     domain_name = aws_s3_bucket.rss.bucket_regional_domain_name
     custom_header {
-      name = "Accept-Ranges"
+      name  = "Accept-Ranges"
       value = "bytes"
     }
-    origin_id   = local.s3_origin_id
+    origin_id = local.s3_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
@@ -542,27 +445,27 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 
   viewer_certificate {
     cloudfront_default_certificate = false
-    acm_certificate_arn = data.aws_acm_certificate.cert.arn
-    ssl_support_method = "sni-only"
-    minimum_protocol_version  = "TLSv1.2_2021"
+    acm_certificate_arn            = data.aws_acm_certificate.cert.arn
+    ssl_support_method             = "sni-only"
+    minimum_protocol_version       = "TLSv1.2_2021"
   }
 }
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE CLOUDWATCH ALARM FOR LAMBDA FUNCTION ERRORS
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_cloudwatch_metric_alarm" "podcast_xml_generation_error" {
-  alarm_name                = "XML-Generation-Problem"
-  comparison_operator       = "GreaterThanThreshold"
-  evaluation_periods        = "1"
-  metric_name               = "Errors"
-  namespace                 = "AWS/Lambda"
-  period                    = "300"
-  statistic                 = "Average"
-  threshold                 = "0"
-  alarm_actions             = [aws_sns_topic.podcast-errors.arn]
-  ok_actions                = [aws_sns_topic.podcast-errors.arn]
-  alarm_description         = "This monitors issues with the xml file generating"
-  actions_enabled           = true
+  alarm_name          = "XML-Generation-Problem"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "Errors"
+  namespace           = "AWS/Lambda"
+  period              = "300"
+  statistic           = "Average"
+  threshold           = "0"
+  alarm_actions       = [aws_sns_topic.podcast-errors.arn]
+  ok_actions          = [aws_sns_topic.podcast-errors.arn]
+  alarm_description   = "This monitors issues with the xml file generating"
+  actions_enabled     = true
 
   dimensions = {
     FunctionName = aws_lambda_function.podcast_xml_generator.function_name
@@ -601,15 +504,8 @@ resource "aws_route53_record" "podcastcontent" {
 # CREATE ZIP OF LAMBDA FUNCTION
 # ---------------------------------------------------------------------------------------------------------------------
 data "archive_file" "podcast_lambda" {
-  type        = "zip"
-  source_file = "podcast.py"
-  output_path = "podcast.py.zip"
+  type             = "zip"
+  source_file      = "podcast.py"
+  output_path      = "podcast.py.zip"
   output_file_mode = "0666"
-}
-# ---------------------------------------------------------------------------------------------------------------------
-# OUTPUT VARIABLES
-# ---------------------------------------------------------------------------------------------------------------------
-output "podcast_url" {
-  value       = aws_lambda_function.podcast_xml_generator.environment[0].variables.podcast_url
-  description = "This is the url to reach the rss feed for the podcast"
 }
