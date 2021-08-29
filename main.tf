@@ -70,7 +70,7 @@ data "aws_iam_policy_document" "sns-topic-policy" {
   //      type = "Service"
   //    }
   //    condition {
-  //      test = "StringEquals"
+  //      tests = "StringEquals"
   //      values = [
   ////        ""
   //      ]
@@ -105,7 +105,7 @@ resource "aws_s3_bucket" "rss" {
   }
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# CREATE S3 BUCKET POLICY NEED TO UPDATE
+# CREATE S3 BUCKET POLICY
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_bucket_policy" "content" {
   bucket = aws_s3_bucket.content.id
