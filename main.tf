@@ -217,7 +217,16 @@ resource "aws_s3_bucket_policy" "content" {
                 "AWS": "${aws_cloudfront_origin_access_identity.cloudfront_access_id.iam_arn}"
             },
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::${var.content_bucket_name}/*"
+            "Resource": "${aws_s3_bucket.content.arn}/*"
+        },
+        {
+            "Sid": "2",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "${aws_iam_role.iam_for_lambda.arn}"
+            },
+            "Action": "s3:ListBucket",
+            "Resource": "${aws_s3_bucket.content.arn}"
         }
     ]
 }

@@ -39,7 +39,7 @@ def prettify(elem):
 # create the XML document root
 
 
-def make_root():
+def make_feed():
     """Generate xml file
     """
     rss = Element('rss', version='2.0')
@@ -88,11 +88,11 @@ def make_root():
     # END image ########################################################################################################
 
     s3_bucket_object = boto3.client('s3')
-    content_list = s3_bucket_object.list_objects_v2(Bucket=s3_bucket_trigger, Delimiter='episode')
+    content_list = s3_bucket_object.list_objects_v2(Bucket=s3_bucket_trigger)
 
     # for each object in the bucket create relevant xml tags ###########################################################
     for each_s3_object in content_list['Contents']:
-        if 'mp3' in each_s3_object['Key']:
+        if '.mp3' in each_s3_object['Key']:
 
             episode, media = each_s3_object['Key'].split('/')  # episode = foldername, title = filename
             # get publish dates for each episode #######################################################################
@@ -137,7 +137,7 @@ def make_root():
             SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
 
     for each_s3_object in content_list['Contents']:
-        if 'm4a' in each_s3_object['Key']:
+        if '.m4a' in each_s3_object['Key']:
             episode2, media2 = each_s3_object['Key'].split('/')  # episode2 = foldername, title = filename
             # get publish dates for each episode #######################################################################
             string_date_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/pubdate.txt')
@@ -187,4 +187,4 @@ def make_root():
 
 
 def handler(event, context):
-    make_root()
+    make_feed()
