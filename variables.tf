@@ -1,6 +1,3 @@
-# ---------------------------------------------------------------------------------------------------------------------
-# Set Infrastructure Variables - Domain Name, Content Sub Domain, Podcast RSS Sub Domain, etc.
-# ---------------------------------------------------------------------------------------------------------------------
 variable "domain_name" {
   type        = string
   description = "The root domain of the podcast i.e. example.com as a relative URL"
