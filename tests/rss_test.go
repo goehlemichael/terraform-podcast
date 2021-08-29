@@ -1,7 +1,7 @@
 package test
 
 import (
-	"fmt"
+// 	"fmt"
 	"testing"
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -21,7 +21,10 @@ func TestPodcast(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 	// Run `terraform output` to get the RSS/XML feed for the podcast
 	podcast_url := terraform.Output(t, terraformOptions, "podcast_url")
+// 	content_bucket_url := terraform.Output(t, terraformOptions, "content_bucket_url")
+// 	log_bucket_url := terraform.Output(t, terraformOptions, "log_bucket_url")
 	// Make an HTTP request to the rss feed and validate no errors occur
-	url := fmt.Sprintf("%s", podcast_url)
-	http_helper.HttpGetE(t, url, nil)
+// 	url := fmt.Sprintf("%s", podcast_url)
+	http_helper.HttpGetE(t, podcast_url, nil)
+
 }
