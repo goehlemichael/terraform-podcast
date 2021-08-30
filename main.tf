@@ -281,7 +281,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   function_name    = "Podcast_Name_Example"
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "podcast.handler"
-  runtime          = "python3.7"
+  runtime          = "python3.9"
   timeout          = "60"
   source_code_hash = filebase64sha256("podcast.py.zip")
 
