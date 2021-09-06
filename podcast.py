@@ -93,7 +93,6 @@ def make_feed():
     # for each object in the bucket create relevant xml tags ###########################################################
     for each_s3_object in content_list['Contents']:
         if '.mp3' in each_s3_object['Key']:
-
             episode, media = each_s3_object['Key'].split('/')  # episode = foldername, title = filename
             # get publish dates for each episode #######################################################################
             string_date_url = cloudfront_content + urllib.parse.quote(episode + '/pubdate.txt')
