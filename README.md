@@ -16,41 +16,35 @@ Episode creation, and updating media is done through the aws console or aws cli 
 $ cd tests
 ```
 ```bash
-$ go test -v -timeout 30m
+$ go test -p 1 -v -count=1 -timeout 30m
 ```
 
 ## Setup
 
-1) You need a domain name registered through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
-2) When the domain is registered you will have a hosted zone
+1) Need domain name registered through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
+2) After domain name registered a hosted zone will be created
 3) With Certificate Manager get a certificate for the `domainyouchoose.com` with a `*.domainyouchoose.com` as alternative
 4) Run `terraform apply` from the root of this directory and set variables using prompts
 
    or
 
-   update and rename _.tfvars.example_ file to _example.tfvars_
+   use .tfvars file, use the example _.tfvars.example_ file to _domainyouchoose.tfvars_
 
    ```bash
-   terraform apply -var-file="example.tfvars"
+   terraform apply -var-file="domainyouchoose.tfvars"
    ```
 
 ## Using Infrastructure
 
 1) Record/Edit your podcast episode using your choice of a media editing tool
-2) Export an mp3 and upload that mp3 to your content bucket in the aws web console
+2) Export mp3 and upload to your content bucket in the aws web console
 
-   alternate - using aws cli
+   - alternative - using aws-cli
 
-   Download contents of s3 content bucket to the directory you are in
-
-   ```bash
-   aws s3 sync s3://<MEDIA BUCKET> .
-   ```
-
-   sync the contents of the directory you are in with the s3 content bucket
+   sync contents of directory you are in with s3 content bucket
 
    ```bash
-   aws s3 sync . s3://<MEDIA BUCKET NAME>
+   aws s3 sync . s3://<MEDIA BUCKET NAME> --exclude "*.DS_Store*"
    ```
 
 3) Invalidate the cloudfront cache <ID> = media distribution id
@@ -65,27 +59,43 @@ Podcast episodes are configured using the structure below in the media bucket. E
 are used to configure the podcast.
 
 ```bash
-.
-+-- episode1
-    +-- episode1.mp3
-    +-- image.jpeg
-    +-- title.txt
-    +-- description.txt
-    +-- pubdate.txt
-    +-- duration.txt
-    +-- explicit.txt
-+-- episode2
-    +-- episode2.mp3
-    +-- image.jpeg
-    +-- title.txt
-    +-- description.txt
-    +-- pubdate.txt
-    +-- duration.txt
-    +-- explicit.txt
+. podcast_example
++-- rss
+    +-- podcst.xml
++-- podcast
+    +-- episode1
+        +-- episode1.mp3
+        +-- image.jpeg
+        +-- title.txt
+        +-- description.txt
+        +-- pubdate.txt
+        +-- duration.txt
+        +-- explicit.txt
+        +-- episodetype.txt
+    +-- episode2
+        +-- episode2.mp3
+        +-- image.jpeg
+        +-- title.txt
+        +-- description.txt
+        +-- pubdate.txt
+        +-- duration.txt
+        +-- explicit.txt
+        +-- episodetype.txt
+    +-- ......
+        +-- .....
 +-- image.jpeg
 ```
 
 ## What happens
+Terraform outputs:
+
+  - podcast_url = domain rss feed hosted at
+  - podcast_feed_cdn_url = cloudfront url of rss feed
+  - content_bucket_url = s3
+  - log_bucket_url
+  - content_cdn_url
+  - lambda_name
+  - region
 
 Now you will have an endpoint which is your rss feed sub domain - `podcast.example.com`
 
