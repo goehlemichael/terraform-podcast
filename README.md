@@ -61,7 +61,7 @@ are used to configure the podcast.
 ```bash
 . podcast_example
 +-- rss
-    +-- podcst.xml
+    +-- podcast.xml
 +-- podcast
     +-- episode1
         +-- episode1.mp3
