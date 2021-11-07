@@ -22,7 +22,8 @@ make test
 2) After creation, you will have a hosted zone.
 3) Using 'Certificate Manager' get a certificate for `<domainyouchoose>.com` with a `*.<domainyouchoose.com>` as alternative.
 4) Prior to step 5, you can also create a variables file and name it _whateveryouwant.tfvars_
-5) Run `terraform apply` from the root of this directory and set variables using prompts.
+5) Inside the versions.tf update the profile value to the aws profile you wish to apply changes to
+6) Run `terraform apply` from the root of this directory and set variables using prompts.
 
    or
 
