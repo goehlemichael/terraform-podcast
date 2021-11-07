@@ -13,10 +13,7 @@ Episode creation, and updating media is done through the aws console or aws cli 
 ## Quick Start from root directory (Must have tls cert and domcain setup)
 
 ```bash
-$ cd tests
-```
-```bash
-$ go test -p 1 -v -count=1 -timeout 30m
+make test
 ```
 
 ## Setup
@@ -40,15 +37,15 @@ $ go test -p 1 -v -count=1 -timeout 30m
 1) Record/Edit your podcast episode using your choice of a media editing tool
 2) Export mp3 and upload to your content bucket in the aws web console
 
-   - alternative - using aws-cli
+- alternative - using aws-cli
 
-   sync contents of directory you are in with s3 content bucket
+  sync contents of directory you are in with s3 content bucket
 
-   ```bash
-   aws s3 sync . s3://<MEDIA BUCKET NAME> --exclude "*.DS_Store*"
-   ```
+  ```bash
+  aws s3 sync . s3://<MEDIA BUCKET NAME> --exclude "*.DS_Store*"
+  ```
 
-3) Invalidate the cloudfront cache <ID> = media distribution id
+3) Invalidate the cloudfront cache ID = media distribution id
 
    ```bash
    aws cloudfront create-invalidation --distribution-id <ID> --paths "/podcast.xml"
@@ -88,15 +85,16 @@ are used to configure the podcast.
 ```
 
 ## What happens
+
 Terraform outputs:
 
-  - podcast_url = domain rss feed hosted at
-  - podcast_feed_cdn_url = cloudfront url of rss feed
-  - content_bucket_url = s3
-  - log_bucket_url
-  - content_cdn_url
-  - lambda_name
-  - region
+- podcast_url = domain rss feed hosted at
+- podcast_feed_cdn_url = cloudfront url of rss feed
+- content_bucket_url = s3
+- log_bucket_url
+- content_cdn_url
+- lambda_name
+- region
 
 Now you will have an endpoint which is your rss feed sub domain - `podcast.example.com`
 
