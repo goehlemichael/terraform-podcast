@@ -26,11 +26,11 @@ make test
 
    or
 
-   using the example .tfvars file,udpate _.tfvars.example_ file to _domainyouchoose.tfvars_ and fill in the variable values
+   using the example .tfvars file,udpate _.tfvars.example_ file to _whateveryouwant.tfvars_ and fill in the variable values
 
    ```bash
-   terraform plan -var-file="domainyouchoose.tfvars"
-   terraform apply -var-file="domainyouchoose.tfvars"
+   terraform plan -var-file="whateveryouwant.tfvars"
+   terraform apply -var-file="whateveryouwant.tfvars"
    ```
 
 ## Using Infrastructure
