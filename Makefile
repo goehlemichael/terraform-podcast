@@ -6,7 +6,7 @@ markdownlint:
 
 .PHONY: test
 test:
-	@go test -p 1 -v -count=1 -timeout 30m
+	@cd tests;go test -p 1 -v -count=1 -timeout 30m
 
 .PHONY: plan
 plan:
