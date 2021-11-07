@@ -19,10 +19,10 @@ make test
 ## Quick Setup
 
 1) Register a domain through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
-2) After creation you will have a hosted zone
-3) Using 'Certificate Manager' get a certificate for `<domainyouchoose>.com` with a `*.<domainyouchoose.com>` as alternative
+2) After creation, you will have a hosted zone.
+3) Using 'Certificate Manager' get a certificate for `<domainyouchoose>.com` with a `*.<domainyouchoose.com>` as alternative.
 4) Prior to step 5, you can also create a variables file and name it _whateveryouwant.tfvars_
-5) Run `terraform apply` from the root of this directory and set variables using prompts
+5) Run `terraform apply` from the root of this directory and set variables using prompts.
 
    or
 
@@ -35,7 +35,7 @@ make test
 
 ## Using Infrastructure
 
-1) Record/Edit your podcast episode using your choice of a media editing tool
+1) Record/Edit podcast episode using your choice of a media editing tool
 2) Export audio in a supported audio (mp3 or m4a) format and upload to your 'content_bucket_name' in the aws web console
 
 - alternative - using aws-cli
@@ -97,9 +97,9 @@ Terraform outputs:
 - lambda_name
 - region
 
-Now you will have an endpoint which is your rss feed sub domain - `podcast.example.com`
+Now you will have an endpoint which is your rss feed subdomain - `podcast.example.com`
 
-This can be shared with the major pocast directories like Spotify, Apple, Google, etc.
+This can be shared with the major podcast directories like Spotify, Apple, Google, etc.
 
 ## How to tear down
 
