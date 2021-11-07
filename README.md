@@ -109,5 +109,5 @@ This can be shared with the major podcast directories like Spotify, Apple, Googl
 
 Useful links to podcast xml guidelines:
 
-- [Google Podcasat RSS Guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
+- [Google Podcast RSS Guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
 - [Apple Podcast Connect](https://help.apple.com/itc/podcasts_connect/#/itcc0e1eaa94)
