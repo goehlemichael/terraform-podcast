@@ -1,4 +1,5 @@
 MARKDOWNLINT_IMAGE=markdownlint/markdownlint:latest
+PODCAST_NAME=example
 
 .PHONY: markdownlint
 markdownlint:
@@ -10,4 +11,12 @@ test:
 
 .PHONY: plan
 plan:
-	@terraform plan -var-file="${PODCAST_NAME.tfvars}"
+	@terraform plan -var-file="${PODCAST_NAME}.tfvars"
+
+.PHONY: apply
+apply:
+	@terraform apply -var-file="${PODCAST_NAME}.tfvars"
+
+.PHONY: destroy
+destroy:
+	@terraform destroy -var-file="${PODCAST_NAME}.tfvars"

@@ -101,6 +101,12 @@ Now you will have an endpoint which is your rss feed sub domain - `podcast.examp
 
 This can be shared with the major pocast directories like Spotify, Apple, Google, etc.
 
+## How to tear down
+
+  ```bash
+  make destroy
+  ```
+
 Useful links to podcast xml guidelines:
 
 - [Google Podcasat RSS Guidelines](https://developers.google.com/search/docs/guides/podcast-guidelines)
