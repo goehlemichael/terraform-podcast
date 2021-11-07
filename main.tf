@@ -330,7 +330,7 @@ resource "aws_s3_bucket_notification" "bucket_notification" {
 # CREATE CLOUDFRONT DISTRIBUTIONS FOR PODCAST CONTENT & RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
 locals {
-  s3_origin_id = "S3-Podcast"
+  s3_origin_id = "PODCAST_NAME"
 }
 
 resource "aws_cloudfront_distribution" "podcast_content" {

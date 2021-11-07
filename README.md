@@ -31,6 +31,7 @@ $ go test -p 1 -v -count=1 -timeout 30m
    use .tfvars file, use the example _.tfvars.example_ file to _domainyouchoose.tfvars_
 
    ```bash
+   terraform plan -var-file="domainyouchoose.tfvars"
    terraform apply -var-file="domainyouchoose.tfvars"
    ```
 
