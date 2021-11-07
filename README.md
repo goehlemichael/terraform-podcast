@@ -16,16 +16,17 @@ Episode creation, and updating media is done through the aws console or aws cli 
 make test
 ```
 
-## Setup
+## Quick Setup
 
-1) Need domain name registered through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
-2) After domain name registered a hosted zone will be created
-3) With Certificate Manager get a certificate for the `domainyouchoose.com` with a `*.domainyouchoose.com` as alternative
-4) Run `terraform apply` from the root of this directory and set variables using prompts
+1) Register a domain through aws [Instructions](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/domain-register.html)
+2) After creation you will have a hosted zone
+3) Using 'Certificate Manager' get a certificate for `<domainyouchoose>.com` with a `*.<domainyouchoose.com>` as alternative
+4) Prior to step 5, you can also create a variables file and name it _whateveryouwant.tfvars_
+5) Run `terraform apply` from the root of this directory and set variables using prompts
 
    or
 
-   use .tfvars file, use the example _.tfvars.example_ file to _domainyouchoose.tfvars_
+   using the example .tfvars file,udpate _.tfvars.example_ file to _domainyouchoose.tfvars_ and fill in the variable values
 
    ```bash
    terraform plan -var-file="domainyouchoose.tfvars"
@@ -35,7 +36,7 @@ make test
 ## Using Infrastructure
 
 1) Record/Edit your podcast episode using your choice of a media editing tool
-2) Export mp3 and upload to your content bucket in the aws web console
+2) Export audio in a supported audio (mp3 or m4a) format and upload to your 'content_bucket_name' in the aws web console
 
 - alternative - using aws-cli
 
