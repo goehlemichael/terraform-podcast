@@ -10,4 +10,4 @@ test:
 
 .PHONY: plan
 plan:
-	@terraform plan -var-file="${PODCAST_NAME}"
+	@terraform plan -var-file="${PODCAST_NAME.tfvars}"
