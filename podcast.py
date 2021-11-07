@@ -50,7 +50,7 @@ def make_feed():
     rss.set('xmlns:googleplay', 'http://www.google.com/schemas/play-podcasts/1.0')
     # channel - podcast defined here ###################################################################################
     channel = SubElement(rss, 'channel')
-    SubElement(channel, 'generator').text = "https://github.com/goehlemichael/lambda-podcast"
+    SubElement(channel, 'generator').text = "https://github.com/goehlemichael/terraform-podcast"
     SubElement(channel, 'title').text = podcast_name
     SubElement(channel, 'itunes:subtitle').text = podcast_subtitle
     SubElement(channel, 'atom:link', href=podcast_url, rel='self', type='application/rss+xml')
