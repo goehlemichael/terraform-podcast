@@ -83,7 +83,7 @@ are used to configure the podcast.
         +-- episodetype.txt
     +-- ......
         +-- .....
-+-- image.jpeg
+    +-- image.jpeg
 ```
 
 ## What happens
