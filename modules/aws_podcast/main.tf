@@ -168,55 +168,55 @@ POLICY
 resource "aws_s3_bucket_object" "podcast_image" {
   bucket       = aws_s3_bucket.content.id
   key          = "image.jpeg"
-  source       = "./podcast_example/podcast/image.jpeg"
+  source       = "${path.root}/media/image.jpeg"
   content_type = "image/jpeg"
 }
 resource "aws_s3_bucket_object" "episode" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/episode1.mp3"
-  source       = "./podcast_example/podcast/episode1/episode1.mp3"
+  source       = "${path.root}/media/episode1/episode1.mp3"
   content_type = "audio/mp3"
 }
 resource "aws_s3_bucket_object" "episode_type" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/episodetype.txt"
-  source       = "./podcast_example/podcast/episode1/episodetype.txt"
+  source       = "${path.root}/media/episode1/episodetype.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_image" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/image.jpeg"
-  source       = "./podcast_example/podcast/episode1/image.jpeg"
+  source       = "${path.root}/media/episode1/image.jpeg"
   content_type = "image/jpeg"
 }
 resource "aws_s3_bucket_object" "episode_title" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/title.txt"
-  source       = "./podcast_example/podcast/episode1/title.txt"
+  source       = "${path.root}/media/episode1/title.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_description" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/description.txt"
-  source       = "./podcast_example/podcast/episode1/description.txt"
+  source       = "${path.root}/media/episode1/description.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_duration" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/duration.txt"
-  source       = "./podcast_example/podcast/episode1/duration.txt"
+  source       = "${path.root}/media/episode1/duration.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_pubdate" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/pubdate.txt"
-  source       = "./podcast_example/podcast/episode1/pubdate.txt"
+  source       = "${path.root}/media/episode1/pubdate.txt"
   content_type = "text/plain"
 }
 resource "aws_s3_bucket_object" "episode_explicit" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/explicit.txt"
-  source       = "./podcast_example/podcast/episode1/explicit.txt"
+  source       = "${path.root}/media/episode1/explicit.txt"
   content_type = "text/plain"
 }
 # ---------------------------------------------------------------------------------------------------------------------
@@ -225,7 +225,7 @@ resource "aws_s3_bucket_object" "episode_explicit" {
 resource "aws_s3_bucket_object" "podcast_rss" {
   bucket       = aws_s3_bucket.rss.id
   key          = var.podcast_file_name
-  source       = "./podcast_example/rss/${var.podcast_file_name}"
+  source       = "${path.root}/rss/${var.podcast_file_name}"
   content_type = "application/xml"
 }
 # ---------------------------------------------------------------------------------------------------------------------
