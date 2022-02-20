@@ -79,10 +79,9 @@ are used to configure the podcast.
         +-- example.tfvars
 ```
 
-## What happens ?
+## What happens
 
 ### A rss feed endpoint compatible with major podcast directories is created
-
 
 Terraform outputs:
 
