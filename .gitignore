@@ -2,6 +2,6 @@ tests/test_output.log
 terraform*
 .terraform/
 .idea/
-podcast.py.zip
+modules/aws_podcast/podcast.py.zip
 *.tfvars
 *.auto.tfvars
