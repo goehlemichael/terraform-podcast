@@ -283,13 +283,13 @@ resource "aws_lambda_permission" "allow_bucket" {
 # CREATE LAMBDA FUNCTION TO GENERATE XML FOR RSS FEED
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_lambda_function" "podcast_xml_generator" {
-  filename         = "podcast.py.zip"
+  filename         = "${path.module}/podcast.py.zip"
   function_name    = "Podcast_Name_Example"
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "podcast.handler"
   runtime          = "python3.9"
   timeout          = "60"
-  source_code_hash = filebase64sha256("podcast.py.zip")
+  source_code_hash = filebase64sha256("${path.module}/podcast.py.zip")
 
   environment {
     variables = {
@@ -512,7 +512,7 @@ resource "aws_route53_record" "podcastcontent" {
 # ---------------------------------------------------------------------------------------------------------------------
 data "archive_file" "podcast_lambda" {
   type             = "zip"
-  source_file      = "podcast.py"
-  output_path      = "podcast.py.zip"
+  source_file      = "${path.module}/podcast.py"
+  output_path      = "${path.module}/podcast.py.zip"
   output_file_mode = "0666"
 }
