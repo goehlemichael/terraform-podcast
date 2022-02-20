@@ -10,7 +10,7 @@ Episode creation, and updating media is done through the aws console or aws cli 
 
 ![Topology](https://raw.githubusercontent.com/goehlemichael/terraform-podcast/master/podcast.jpeg)
 
-## Quick Start from root directory (Must have tls cert and domcain setup)
+## Quick Start from root directory (Must have tls cert and domain setup)
 
 ```bash
 make test
