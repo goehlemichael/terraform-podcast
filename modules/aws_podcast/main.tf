@@ -59,30 +59,9 @@ data "aws_iam_policy_document" "sns-topic-policy" {
     condition {
       test     = "StringEquals"
       variable = "AWS:SourceOwner"
-      values = [
-        //        "${var.default}",
-      ]
+      values   = []
     }
   }
-  //  statement {
-  //    sid = "2"
-  //
-  //    actions = ["SNS:Publish"]
-  //    effect = "Allow"
-  //    resources = [aws_cloudwatch_metric_alarm.podcast_xml_generation_error.arn]
-  //
-  //    principals {
-  //      identifiers = ["events.amazonaws.com"]
-  //      type = "Service"
-  //    }
-  //    condition {
-  //      tests = "StringEquals"
-  //      values = [
-  ////        ""
-  //      ]
-  //      variable = "AWS:SourceOwner"
-  //    }
-  //  }
 }
 
 # Create a subscriber for the topic
@@ -94,8 +73,7 @@ resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
 }
 
 resource "aws_s3_bucket" "logs" {
-  bucket        = var.log_bucket_name
-  force_destroy = true
+  bucket = var.log_bucket_name
 }
 
 resource "aws_s3_bucket_acl" "logs" {
@@ -180,7 +158,7 @@ resource "aws_s3_bucket_policy" "rss" {
 POLICY
 }
 # ---------------------------------------------------------------------------------------------------------------------
-# UPLOAD S3 BUCKET OBJECTS TO CONTENT BUCKET - GENERATES MINIMUM OBJECTS TO CREATE AN EXAMPLE PODCAST
+# UPLOAD S3 BUCKET OBJECTS TO CONTENT BUCKET - GENERATES MINIMUM OBJECTS FOR SINGLE PODCAST WITH ONE EPISODE
 # ---------------------------------------------------------------------------------------------------------------------
 resource "aws_s3_object" "podcast_image" {
   bucket       = aws_s3_bucket.content.id
@@ -305,7 +283,7 @@ resource "aws_lambda_function" "podcast_xml_generator" {
   role             = aws_iam_role.iam_for_lambda.arn
   handler          = "podcast.handler"
   runtime          = "python3.9"
-  timeout          = "60"
+  timeout          = "120"
   source_code_hash = filebase64sha256("${path.module}/podcast.py.zip")
 
   environment {
@@ -428,7 +406,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
 
   enabled             = true
   is_ipv6_enabled     = true
-  comment             = "Contains xml file to be shared with public directories like spotify, google podcasts, etc."
+  comment             = "Contains xml file to be shared with public directories like Apple, spotify, google podcasts, etc."
   default_root_object = var.podcast_file_name
 
   logging_config {

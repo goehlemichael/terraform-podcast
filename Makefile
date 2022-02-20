@@ -11,12 +11,12 @@ test:
 
 .PHONY: plan
 plan:
-	@terraform plan -var-file="${PODCAST_NAME}.tfvars"
+	@cd examples/single_podcast_aws;terraform plan -var-file="${PODCAST_NAME}.tfvars"
 
 .PHONY: apply
 apply:
-	@terraform apply -var-file="${PODCAST_NAME}.tfvars"
+	@cd examples/single_podcast_aws;terraform apply -var-file="${PODCAST_NAME}.tfvars"
 
 .PHONY: destroy
 destroy:
-	@terraform destroy -var-file="${PODCAST_NAME}.tfvars"
+	@cd examples/single_podcast_aws;terraform destroy -var-file="${PODCAST_NAME}.tfvars"
