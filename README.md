@@ -1,6 +1,6 @@
 # terraform-podcast
 
-Terraform script for provisioning infrastructure to host a podcast on AWS.
+Terraform module for provisioning infrastructure to host a podcast on AWS.
 
 This is the basics you need to get a podcast up and running. There is no UI or web application.
 
