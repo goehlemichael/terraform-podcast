@@ -95,22 +95,39 @@ resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
 
 resource "aws_s3_bucket" "logs" {
   bucket        = var.log_bucket_name
-  acl           = "private"
   force_destroy = true
+}
+
+resource "aws_s3_bucket_acl" "logs" {
+  bucket = aws_s3_bucket.logs.id
+  acl    = "private"
 }
 
 resource "aws_s3_bucket" "content" {
   bucket = var.content_bucket_name
+}
+
+resource "aws_s3_bucket_acl" "content" {
+  bucket = aws_s3_bucket.content.id
   acl    = "public-read"
 }
 
 resource "aws_s3_bucket" "rss" {
   bucket = var.rss_bucket_name
+}
+
+resource "aws_s3_bucket_acl" "rss" {
+  bucket = aws_s3_bucket.rss.id
   acl    = "public-read"
-  website {
-    index_document = var.podcast_file_name
+}
+
+resource "aws_s3_bucket_website_configuration" "rss" {
+  bucket = aws_s3_bucket.rss.id
+  index_document {
+    suffix = var.podcast_file_name
   }
 }
+
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE S3 BUCKET POLICY
 # ---------------------------------------------------------------------------------------------------------------------
@@ -165,55 +182,55 @@ POLICY
 # ---------------------------------------------------------------------------------------------------------------------
 # UPLOAD S3 BUCKET OBJECTS TO CONTENT BUCKET - GENERATES MINIMUM OBJECTS TO CREATE AN EXAMPLE PODCAST
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_s3_bucket_object" "podcast_image" {
+resource "aws_s3_object" "podcast_image" {
   bucket       = aws_s3_bucket.content.id
   key          = "image.jpeg"
   source       = "${path.root}/media/image.jpeg"
   content_type = "image/jpeg"
 }
-resource "aws_s3_bucket_object" "episode" {
+resource "aws_s3_object" "episode" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/episode1.mp3"
   source       = "${path.root}/media/episode1/episode1.mp3"
   content_type = "audio/mp3"
 }
-resource "aws_s3_bucket_object" "episode_type" {
+resource "aws_s3_object" "episode_type" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/episodetype.txt"
   source       = "${path.root}/media/episode1/episodetype.txt"
   content_type = "text/plain"
 }
-resource "aws_s3_bucket_object" "episode_image" {
+resource "aws_s3_object" "episode_image" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/image.jpeg"
   source       = "${path.root}/media/episode1/image.jpeg"
   content_type = "image/jpeg"
 }
-resource "aws_s3_bucket_object" "episode_title" {
+resource "aws_s3_object" "episode_title" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/title.txt"
   source       = "${path.root}/media/episode1/title.txt"
   content_type = "text/plain"
 }
-resource "aws_s3_bucket_object" "episode_description" {
+resource "aws_s3_object" "episode_description" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/description.txt"
   source       = "${path.root}/media/episode1/description.txt"
   content_type = "text/plain"
 }
-resource "aws_s3_bucket_object" "episode_duration" {
+resource "aws_s3_object" "episode_duration" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/duration.txt"
   source       = "${path.root}/media/episode1/duration.txt"
   content_type = "text/plain"
 }
-resource "aws_s3_bucket_object" "episode_pubdate" {
+resource "aws_s3_object" "episode_pubdate" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/pubdate.txt"
   source       = "${path.root}/media/episode1/pubdate.txt"
   content_type = "text/plain"
 }
-resource "aws_s3_bucket_object" "episode_explicit" {
+resource "aws_s3_object" "episode_explicit" {
   bucket       = aws_s3_bucket.content.id
   key          = "episode1/explicit.txt"
   source       = "${path.root}/media/episode1/explicit.txt"
@@ -222,7 +239,7 @@ resource "aws_s3_bucket_object" "episode_explicit" {
 # ---------------------------------------------------------------------------------------------------------------------
 # UPLOAD S3 BUCKET OBJECTS RSS BUCKET - This is to remove the object after teardown
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_s3_bucket_object" "podcast_rss" {
+resource "aws_s3_object" "podcast_rss" {
   bucket       = aws_s3_bucket.rss.id
   key          = var.podcast_file_name
   source       = "${path.root}/rss/${var.podcast_file_name}"
