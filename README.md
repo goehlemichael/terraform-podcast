@@ -59,34 +59,30 @@ Podcast episodes are configured using the structure below in the media bucket. E
 are used to configure the podcast.
 
 ```bash
-. podcast_example
-+-- rss
-    +-- podcast.xml
-+-- podcast
-    +-- episode1
-        +-- episode1.mp3
+. examples
++-- single_podcast_aws
+    +-- main.tf
+    +-- media
         +-- image.jpeg
-        +-- title.txt
-        +-- description.txt
-        +-- pubdate.txt
-        +-- duration.txt
-        +-- explicit.txt
-        +-- episodetype.txt
-    +-- episode2
-        +-- episode2.mp3
-        +-- image.jpeg
-        +-- title.txt
-        +-- description.txt
-        +-- pubdate.txt
-        +-- duration.txt
-        +-- explicit.txt
-        +-- episodetype.txt
-    +-- ......
-        +-- .....
-    +-- image.jpeg
+        +-- episode1
+            +-- episode1.mp3
+            +-- image.jpeg
+            +-- title.txt
+            +-- description.txt
+            +-- pubdate.txt
+            +-- duration.txt
+            +-- explicit.txt
+            +-- episodetype.txt
+    +-- rss
+        +-- podcast.xml
+    +-- vars
+        +-- example.tfvars
 ```
 
-## What happens
+## What happens ?
+
+### A rss feed endpoint compatible with major podcast directories is created
+
 
 Terraform outputs:
 
@@ -98,7 +94,7 @@ Terraform outputs:
 - lambda_name
 - region
 
-Now you will have an endpoint which is your rss feed subdomain - `podcast.example.com`
+your rss feed subdomain - `podcast.example.com`
 
 This can be shared with the major podcast directories like Spotify, Apple, Google, etc.
 
