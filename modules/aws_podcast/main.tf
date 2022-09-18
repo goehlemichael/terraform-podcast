@@ -363,6 +363,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     viewer_protocol_policy = "allow-all"
   }
 
+  http_version = "http2and3"
   price_class = "PriceClass_200"
   # Update locations later
   restrictions {
@@ -416,6 +417,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     viewer_protocol_policy = "allow-all"
   }
 
+  http_version = "http2and3"
   price_class = "PriceClass_200"
   # Update locations
   restrictions {
