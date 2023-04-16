@@ -5,7 +5,7 @@ from xml.dom import minidom
 import urllib
 
 # import environment variables #########################################################################################
-cloudfront_content = os.environ['cloudfront_content']        # content cloudfront
+cloudfront_content = os.environ['cloudfront_content']        # content cloudfront url
 podcast_name = os.environ['podcast_name']                    # podcast name
 podcast_subtitle = os.environ['podcast_subtitle']            # podcast subtitle
 podcast_author = os.environ['podcast_author']                # podcast author
@@ -26,7 +26,7 @@ category_two = os.environ['category_two']                    # category two
 sub_category_two = os.environ['sub_category_two']            # subcategory two
 explicit = os.environ['explicit']                            # yes, no
 
-# reformat the xml
+# reformat the xml #####################################################################################################
 
 
 def prettify(elem):
@@ -36,7 +36,7 @@ def prettify(elem):
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent="\t", newl="\n", encoding='UTF-8')
 
-# create the XML document root
+# create the XML document root #########################################################################################
 
 
 def make_feed():
@@ -91,93 +91,55 @@ def make_feed():
     content_list = s3_bucket_object.list_objects_v2(Bucket=s3_bucket_trigger)
 
     # for each object in the bucket create relevant xml tags ###########################################################
+    def get_episode_info(each_s3_object, cloudfront_content):
+        episode_folder, episode_title = each_s3_object['Key'].split('/')
+
+        # retrieve publish date
+        publish_date_url = cloudfront_content + urllib.parse.quote(episode_folder + '/pubdate.txt')
+        publish_date = urllib.request.urlopen(publish_date_url).read().decode('utf-8')
+
+        # retrieve episode image
+        episode_image_url = cloudfront_content + urllib.parse.quote(episode_folder + '/image.jpeg')
+
+        # retrieve episode duration
+        duration_url = cloudfront_content + urllib.parse.quote(episode_folder + '/duration.txt')
+        duration = urllib.request.urlopen(duration_url).read().decode('utf-8')
+
+        # retrieve episode description
+        description_url = cloudfront_content + urllib.parse.quote(episode_folder + '/description.txt')
+        description_text = urllib.request.urlopen(description_url).read().decode('utf-8')
+
+        # retrieve episode title
+        title_url = cloudfront_content + urllib.parse.quote(episode_folder + '/title.txt')
+        title_text = urllib.request.urlopen(title_url).read().decode('utf-8')
+
+        # retrieve episode type
+        episode_type_url = cloudfront_content + urllib.parse.quote(episode_folder + '/episodetype.txt')
+        episode_type_text = urllib.request.urlopen(episode_type_url).read().decode('utf-8')
+
+        # build XML item element #######################################################################################
+        item = SubElement(channel, 'item')
+        SubElement(item, 'description').text = description_text
+        SubElement(item, 'itunes:image', href=episode_image_url)
+        SubElement(item, 'title').text = title_text
+        SubElement(item, 'pubDate').text = publish_date
+        SubElement(item, 'itunes:duration').text = duration
+        SubElement(item, 'itunes:episodeType').text = episode_type_text
+        SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
+
+        # retrieve episode media URL
+        media_resource = each_s3_object['Key']
+        media_url = cloudfront_content + urllib.parse.quote(media_resource)
+        SubElement(item, 'enclosure', url=media_url, length=str(each_s3_object['Size']), type='audio/mpeg')
+        SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(media_resource)
+
+    # iterate through S3 objects and retrieve episode information
     for each_s3_object in content_list['Contents']:
         if '.mp3' in each_s3_object['Key']:
-            episode, media = each_s3_object['Key'].split('/')  # episode = foldername, title = filename
-            # get publish dates for each episode #######################################################################
-            string_date_url = cloudfront_content + urllib.parse.quote(episode + '/pubdate.txt')
-            date = urllib.request.urlopen(string_date_url)
-            publish_date = date.read().decode('utf-8')
-            # get image url ############################################################################################
-            episode_image = cloudfront_content + urllib.parse.quote(episode + '/image.jpeg')
-            # get episode duration
-            duration_url = cloudfront_content + urllib.parse.quote(episode + '/duration.txt')
-            duration_bytes = urllib.request.urlopen(duration_url)
-            duration = duration_bytes.read().decode('utf-8')
-            # get episode description ##################################################################################
-            description_url = cloudfront_content + urllib.parse.quote(episode + '/description.txt')
-            description_bytes = urllib.request.urlopen(description_url)
-            description_text = description_bytes.read().decode('utf-8')
-            # get if explicit or not
-            # string_explicit_url = cloudfront_content + urllib.parse.quote(episode + '/explicit.txt')
-            # explicit_bytes = urllib.request.urlopen(string_explicit_url)
-            # explicit = explicit_bytes.read().decode('utf-8')
-            # get episode title
-            title_url = cloudfront_content + urllib.parse.quote(episode + '/title.txt')
-            title_bytes = urllib.request.urlopen(title_url)
-            title_text = title_bytes.read().decode('utf-8')
-            # get episode type #########################################################################################
-            episode_type = cloudfront_content + urllib.parse.quote(episode + '/episodetype.txt')
-            episode_type_bytes = urllib.request.urlopen(episode_type)
-            episode_type_text = episode_type_bytes.read().decode('utf-8')
-            # item - each episode defined here #########################################################################
-            item = SubElement(channel, 'item')
-            SubElement(item, 'description').text = description_text
-            SubElement(item, 'itunes:explicit').text = explicit
-            SubElement(item, 'itunes:image', href=episode_image)
-            SubElement(item, 'title').text = title_text
-            SubElement(item, 'pubDate').text = publish_date
-            SubElement(item, 'itunes:duration').text = duration
-            SubElement(item, 'itunes:episodeType').text = episode_type_text
-            SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
-            mp3_resource = each_s3_object['Key']
-            mp3_url = cloudfront_content + urllib.parse.quote(mp3_resource)
-            SubElement(item, 'enclosure', url=mp3_url, length=str(each_s3_object['Size']), type='audio/mpeg')
-            SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
+            get_episode_info(each_s3_object, cloudfront_content)
 
-    for each_s3_object in content_list['Contents']:
         if '.m4a' in each_s3_object['Key']:
-            episode2, media2 = each_s3_object['Key'].split('/')  # episode2 = foldername, title = filename
-            # get publish dates for each episode #######################################################################
-            string_date_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/pubdate.txt')
-            date = urllib.request.urlopen(string_date_url2)
-            publish_date2 = date.read().decode('utf-8')
-            # get image url ############################################################################################
-            episode_image2 = cloudfront_content + urllib.parse.quote(episode2 + '/image.jpeg')
-            # get episode duration #####################################################################################
-            duration_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/duration.txt')
-            duration_bytes2 = urllib.request.urlopen(duration_url2)
-            duration = duration_bytes2.read().decode('utf-8')
-            # get episode description ##################################################################################
-            description_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/description.txt')
-            description_bytes2 = urllib.request.urlopen(description_url2)
-            description_text2 = description_bytes2.read().decode('utf-8')
-            # get if explicit or not
-            # string_explicit_url = cloudfront_content + urllib.parse.quote(episode2 + '/explicit.txt')
-            # explicit_bytes = urllib.request.urlopen(string_explicit_url)
-            # explicit = explicit_bytes.read().decode('utf-8')
-            # get episode title
-            title_url2 = cloudfront_content + urllib.parse.quote(episode2 + '/title.txt')
-            title_bytes2 = urllib.request.urlopen(title_url2)
-            title_text2 = title_bytes2.read().decode('utf-8')
-            # get episode type #########################################################################################
-            episode_type2 = cloudfront_content + urllib.parse.quote(description2 + '/episodeType.txt')
-            episode_type_bytes2 = urllib.request.urlopen(episode_type2)
-            episode_type_text2 = episode_type_bytes2.read().decode('utf-8')
-            # item - each episode defined here #########################################################################
-            item = SubElement(channel, 'item')
-            SubElement(item, 'description').text = description_text2
-            # SubElement(item, 'itunes:explicit').text = explicit
-            SubElement(item, 'itunes:image', href=episode_image2)
-            SubElement(item, 'title').text = title_text2
-            SubElement(item, 'pubDate').text = publish_date2
-            SubElement(item, 'itunes:duration').text = duration
-            SubElement(item, 'itunes:episodeType').text = episode_type_text2
-            SubElement(item, 'link').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
-            m4a_resource = each_s3_object['Key']
-            m4a_url = cloudfront_content + urllib.parse.quote(m4a_resource)
-            SubElement(item, 'enclosure', url=m4a_url, length=str(each_s3_object['Size']), type='audio/m4a')
-            SubElement(item, 'guid').text = cloudfront_content + urllib.parse.quote(each_s3_object['Key'])
+            get_episode_info(each_s3_object, cloudfront_content)
 
     # upload the podcast.xml file to S3 ################################################################################
     create_podcast_file_content = prettify(rss)
