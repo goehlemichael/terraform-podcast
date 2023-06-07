@@ -68,8 +68,12 @@ data "aws_iam_policy_document" "sns-topic-policy" {
 # ---------------------------------------------------------------------------------------------------------------------
 # CREATE S3 BUCKETS FOR THE MEDIA CONTENT, RSS FEED, AND BUCKET TO SEND CLOUDFRONT LOGS
 # ---------------------------------------------------------------------------------------------------------------------
-resource "aws_cloudfront_origin_access_identity" "cloudfront_access_id" {
-  comment = "To restrict access to s3 bucket"
+resource "aws_cloudfront_origin_access_control" "media_cloudfront" {
+  name                              = "Media Cloudfront Control"
+  description                       = "origin access control for s3 bucket containing podcast media"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }
 
 resource "aws_s3_bucket" "logs" {
@@ -116,16 +120,21 @@ resource "aws_s3_bucket_policy" "content" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "1",
+            "Sid": "AllowCloudFrontServicePrincipalRead",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "${aws_cloudfront_origin_access_identity.cloudfront_access_id.iam_arn}"
+                "Service": "cloudfront.amazonaws.com"
             },
             "Action": "s3:GetObject",
             "Resource": "${aws_s3_bucket.content.arn}/*"
+            "Condition": {
+                "StringEquals": {
+                    "AWS:SourceArn": "${aws_cloudfront_distribution.podcast_content.arn}"
+                }
+            }
         },
         {
-            "Sid": "2",
+            "Sid": "AllowIAMRolePrincipalListBucketForTrigger",
             "Effect": "Allow",
             "Principal": {
                 "AWS": "${aws_iam_role.iam_for_lambda.arn}"
@@ -145,13 +154,18 @@ resource "aws_s3_bucket_policy" "rss" {
     "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "1",
+            "Sid": "AllowCloudFrontServicePrincipalRead",
             "Effect": "Allow",
             "Principal": {
-                "AWS": "${aws_cloudfront_origin_access_identity.cloudfront_access_id.iam_arn}"
+                "Service": "cloudfront.amazonaws.com"
             },
             "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::${var.rss_bucket_name}/*"
+            "Resource": "arn:aws:s3:::${var.rss_domain_name}/*",
+            "Condition": {
+                "StringEquals": {
+                    "AWS:SourceArn": "${aws_cloudfront_distribution.podcast_content.arn}"
+                }
+            }
         }
     ]
 }
@@ -338,7 +352,7 @@ resource "aws_cloudfront_distribution" "podcast_content" {
     origin_id = local.s3_origin_id
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_control.media_cloudfront.id
     }
   }
 
@@ -391,7 +405,7 @@ resource "aws_cloudfront_distribution" "podcast_rss" {
     origin_id = local.s3_origin_id
 
     s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.cloudfront_access_id.cloudfront_access_identity_path
+      origin_access_identity = aws_cloudfront_origin_access_control.media_cloudfront.id
     }
   }
 
